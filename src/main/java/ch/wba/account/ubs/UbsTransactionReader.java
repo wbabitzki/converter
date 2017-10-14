@@ -13,7 +13,12 @@ import java.util.stream.Collectors;
 public class UbsTransactionReader {
 
     @FunctionalInterface
-    private interface InitFieldFunction<T extends UbsTransactionDto, R extends String> {
+    private interface InitTransactionFieldsFunction<T extends UbsTransactionDto, R extends String> {
+        void apply(T entity, R fields);
+    }
+
+    @FunctionalInterface
+    private interface InitBalanceFieldsFunction<T extends UbsBalanceDto, R extends String> {
         void apply(T entity, R fields);
     }
     
@@ -41,9 +46,9 @@ public class UbsTransactionReader {
         BALANCE("Balance", UbsTransactionDto::setBalance);
         
         private final String value;
-        private final InitFieldFunction<UbsTransactionDto, String> initFieldFunction;
+        private final InitTransactionFieldsFunction<UbsTransactionDto, String> initFieldFunction;
 
-        Header(final String value, final InitFieldFunction<UbsTransactionDto, String> function) {
+        Header(final String value, final InitTransactionFieldsFunction<UbsTransactionDto, String> function) {
             this.value = value;
             this.initFieldFunction = function;
         }
@@ -53,6 +58,29 @@ public class UbsTransactionReader {
         }
 
         private void setField(final UbsTransactionDto entity, final String text) {
+            if (!text.isEmpty()) {
+                initFieldFunction.apply(entity, text);
+            }
+        }
+    }
+
+    enum Footer {
+        CLOSING_BALANCE("Closing balance", UbsBalanceDto::setClosingBalance),
+        OPENING_BALANCE("Opening balance", UbsBalanceDto::setOpeningBalance);
+        
+        private final String value;
+        private final InitBalanceFieldsFunction<UbsBalanceDto, String> initFieldFunction;
+
+        Footer(final String value, final InitBalanceFieldsFunction<UbsBalanceDto, String> function) {
+            this.value = value;
+            this.initFieldFunction = function;
+        }
+
+        private String getValue() {
+            return value;
+        }
+
+        private void setField(final UbsBalanceDto entity, final String text) {
             if (!text.isEmpty()) {
                 initFieldFunction.apply(entity, text);
             }
@@ -74,20 +102,29 @@ public class UbsTransactionReader {
         Validate.notNull(input);
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
             final List<String> lines = buffer.lines().collect(Collectors.toList());
+            Validate.notEmpty(lines, "The imported list ist empty");
             validateHeader(lines);
+            validateFooter(lines);
             return lines //
-                    .subList(1, lines.size()).stream() //
+                    .subList(1, lines.size()-3).stream() //
                     .map(ENTITY_MAPPER) //
                     .collect(Collectors.toList());
         }
     }
 
     private void validateHeader(final List<String> lines) {
-        Validate.notEmpty(lines, "The imported list ist empty");
         final String[] headers = lines.get(0).split(";");
         for (final Header header : Header.values()) {
             final String headerName = headers[header.ordinal()];
             Validate.isTrue(header.getValue().equals(headerName), "Unexpected header: '" + headerName + "' instead of '" + header.getValue() + "'");
+        }
+    }
+
+    private void validateFooter(List<String> lines) {
+        final String[] headers = lines.get(lines.size()-2).split(";");
+        for (Footer footer : Footer.values()) {
+            final String footerName = headers[footer.ordinal()];
+            Validate.isTrue(footer.getValue().equals(footerName), "Unexpected footer: '" + footerName + "' instead of '" + footer.getValue() + "'");
         }
     }
 }

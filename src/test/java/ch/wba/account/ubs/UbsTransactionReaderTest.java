@@ -14,9 +14,10 @@ public class UbsTransactionReaderTest {
     private static final String TEST_EMPTY_FILE = "test-emptyFile.csv";
     private static final String TEST_WITHOUT_HEADER = "test-withoutHeader.csv";
     private static final String TEST_VALID_FILE = "test-validFile.csv";
+    private static final String TEST_MISSING_FIELDS_CSV = "test-missingFields.csv";
+    private static final String TEST_WITHOUTFOOTER_CSV = "test-withoutFooter.csv";
 
 
-    
     @Test(expected = IllegalArgumentException.class)
     public void read_null_throwsException() throws Exception {
         //arrange
@@ -39,6 +40,15 @@ public class UbsTransactionReaderTest {
         //arrange
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_WITHOUT_HEADER);
+        //act
+        testee.read(is);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void read_noFooter_throwsExcetption() throws Exception {
+        //arrange
+        final UbsTransactionReader testee = new UbsTransactionReader();
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_WITHOUTFOOTER_CSV);
         //act
         testee.read(is);
     }
@@ -71,7 +81,7 @@ public class UbsTransactionReaderTest {
         final List<UbsTransactionDto> lines = testee.read(is);
 
         //assert
-        assertThat(lines, hasSize(2));
+        assertThat(lines, hasSize(90));
         assertThat(lines.get(0), is(expacted));
     }
 
@@ -79,7 +89,7 @@ public class UbsTransactionReaderTest {
     public void read_missingFields_missingFieldsAreEmpty() throws Exception {
         //arrange
         final UbsTransactionReader testee = new UbsTransactionReader();
-        final InputStream is = getClass().getClassLoader().getResourceAsStream("test-missingFields.csv");
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_MISSING_FIELDS_CSV);
         final UbsTransactionDto expacted = new UbsTransactionDto();
         expacted.setValuationDate("29.09.2017");
         expacted.setBankingRelationship("0235 00547895");
