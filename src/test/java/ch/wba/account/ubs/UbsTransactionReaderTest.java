@@ -74,4 +74,31 @@ public class UbsTransactionReaderTest {
         assertThat(lines, hasSize(2));
         assertThat(lines.get(0), is(expacted));
     }
+
+    @Test
+    public void read_missingFields_missingFieldsAreEmpty() throws Exception {
+        //arrange
+        final UbsTransactionReader testee = new UbsTransactionReader();
+        final InputStream is = getClass().getClassLoader().getResourceAsStream("test-missingFields.csv");
+        final UbsTransactionDto expacted = new UbsTransactionDto();
+        expacted.setValuationDate("29.09.2017");
+        expacted.setBankingRelationship("0235 00547895");
+        expacted.setProduct("0235 00547895.01H");
+        expacted.setIban("CH69 0023 5235 5478 9501 H");
+        expacted.setCcy("CHF");
+        expacted.setFromDate("01.07.2017");
+        expacted.setToDate("30.09.2017");
+        expacted.setDescription("UBS Business Current Account");
+        expacted.setTradeDate("06.07.2017");
+        expacted.setBookingDate("06.07.2017");
+        expacted.setValueDate("06.07.2017");
+        expacted.setDescription1("E-Banking CHF domestic");
+        expacted.setTransactionNo("9935186TI3104156");
+        //act
+        final List<UbsTransactionDto> lines = testee.read(is);
+        //assert
+        assertThat(lines.get(0), is(expacted));
+
+    }
+
 }

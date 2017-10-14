@@ -60,7 +60,7 @@ public class UbsTransactionReader {
     }
 
     private static final Function<String, UbsTransactionDto> ENTITY_MAPPER = line -> {
-        final String[] fields = line.split(";");
+        final String[] fields = line.split(";", -1);
         final UbsTransactionDto entity = new UbsTransactionDto();
 
         for (Header header : Header.values()) {
