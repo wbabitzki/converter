@@ -87,7 +87,7 @@ public class UbsTransactionReader {
         }
     }
 
-    private static final Function<String, UbsTransactionDto> ENTITY_MAPPER = line -> {
+    private static final Function<String, UbsTransactionDto> UBS_TRANSACTION_MAPPER = line -> {
         final String[] fields = line.split(";", -1);
         final UbsTransactionDto entity = new UbsTransactionDto();
 
@@ -98,17 +98,32 @@ public class UbsTransactionReader {
         return entity;
     };
 
-    public List<UbsTransactionDto> read(final InputStream input) throws IOException {
+    public List<UbsTransactionDto> readTransactions(final InputStream input) throws IOException {
         Validate.notNull(input);
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
             final List<String> lines = buffer.lines().collect(Collectors.toList());
             Validate.notEmpty(lines, "The imported list ist empty");
             validateHeader(lines);
-            validateFooter(lines);
             return lines //
                     .subList(1, lines.size()-3).stream() //
-                    .map(ENTITY_MAPPER) //
+                    .map(UBS_TRANSACTION_MAPPER) //
                     .collect(Collectors.toList());
+        }
+    }
+
+    public UbsBalanceDto readBalance(final InputStream input) throws IOException {
+        Validate.notNull(input);
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
+            final List<String> lines = buffer.lines().collect(Collectors.toList());
+            validateFooter(lines);
+            UbsBalanceDto balanceDto = new UbsBalanceDto();
+
+            final String[] fields = lines.get(lines.size()-1).split(";", -1);
+            
+            for (Footer footer : Footer.values()) {
+                footer.setField(balanceDto, fields[footer.ordinal()]);
+            }
+            return balanceDto;
         }
     }
 

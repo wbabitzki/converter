@@ -1,6 +1,8 @@
 package ch.wba.account.ubs;
 
 import converters.BigDecimalConverter;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.math.BigDecimal;
 
@@ -30,5 +32,29 @@ public class UbsBalanceDto {
 
     public void setClosingBalance(String closingBalance) {
         this.closingBalance = BigDecimalConverter.toAmount(closingBalance);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(openingBalance)
+                .append(closingBalance)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final UbsBalanceDto that = (UbsBalanceDto) obj;
+
+        return new EqualsBuilder()
+                .append(openingBalance, that.openingBalance)
+                .append(closingBalance, that.closingBalance)
+                .isEquals();
     }
 }

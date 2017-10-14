@@ -279,7 +279,8 @@ public class UbsTransactionDto {
             return false;
         }
         final UbsTransactionDto that = (UbsTransactionDto) obj;
-        boolean result = new EqualsBuilder()
+
+        return new EqualsBuilder()
                 .append(amount, that.amount)
                 .append(balance, that.balance)
                 .append(bankingRelationship, that.bankingRelationship)
@@ -302,6 +303,5 @@ public class UbsTransactionDto {
                 .append(valueDate, that.valueDate)
                 .append(valuationDate, that.valuationDate)
                 .isEquals();
-        return result;
     }
 }

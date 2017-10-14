@@ -23,7 +23,7 @@ public class UbsTransactionReaderTest {
         //arrange
         final UbsTransactionReader testee = new UbsTransactionReader();
         //act
-        testee.read(null);
+        testee.readTransactions(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -32,7 +32,7 @@ public class UbsTransactionReaderTest {
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_EMPTY_FILE);
         //act
-        testee.read(is);
+        testee.readTransactions(is);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -41,7 +41,7 @@ public class UbsTransactionReaderTest {
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_WITHOUT_HEADER);
         //act
-        testee.read(is);
+        testee.readTransactions(is);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,7 +50,7 @@ public class UbsTransactionReaderTest {
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_WITHOUTFOOTER_CSV);
         //act
-        testee.read(is);
+        testee.readTransactions(is);
     }
 
     @Test
@@ -78,11 +78,27 @@ public class UbsTransactionReaderTest {
         expacted.setBalance("42'449.82");
 
         //act
-        final List<UbsTransactionDto> lines = testee.read(is);
+        final List<UbsTransactionDto> transactions = testee.readTransactions(is);
 
         //assert
-        assertThat(lines, hasSize(90));
-        assertThat(lines.get(0), is(expacted));
+        assertThat(transactions, hasSize(90));
+        assertThat(transactions.get(0), is(expacted));
+    }
+
+    @Test
+    public void read_validFile_returnsBalance() throws Exception {
+        //arrange
+        final UbsTransactionReader testee = new UbsTransactionReader();
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_VALID_FILE);
+        final UbsBalanceDto expacted = new UbsBalanceDto();
+        expacted.setClosingBalance("59066.71");
+        expacted.setOpeningBalance("42628.82");
+
+        //act
+        final UbsBalanceDto balances = testee.readBalance(is);
+
+        //assert
+        assertThat(balances, is(expacted));
     }
 
     @Test
@@ -105,7 +121,7 @@ public class UbsTransactionReaderTest {
         expacted.setDescription1("E-Banking CHF domestic");
         expacted.setTransactionNo("9935186TI3104156");
         //act
-        final List<UbsTransactionDto> lines = testee.read(is);
+        final List<UbsTransactionDto> lines = testee.readTransactions(is);
         //assert
         assertThat(lines.get(0), is(expacted));
 
