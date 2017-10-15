@@ -58,31 +58,31 @@ public class UbsTransactionReaderTest {
         //arrange
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_VALID_FILE);
-        final UbsTransactionDto expacted = new UbsTransactionDto();
-        expacted.setValuationDate("29.09.2017");
-        expacted.setBankingRelationship("0235 00547895");
-        expacted.setProduct("0235 00547895.01H");
-        expacted.setIban("CH69 0023 5235 5478 9501 H");
-        expacted.setCcy("CHF");
-        expacted.setFromDate("01.07.2017");
-        expacted.setToDate("30.09.2017");
-        expacted.setDescription("UBS Business Current Account");
-        expacted.setTradeDate("04.07.2017");
-        expacted.setBookingDate("04.07.2017");
-        expacted.setValueDate("04.07.2017");
-        expacted.setDescription1("e-banking Order");
-        expacted.setDescription2("swisscom");
-        expacted.setDescription3("Wladimir Babitzki, 6206 Neuenkirch, E-Banking booktransfer");
-        expacted.setTransactionNo("9935185TI2774507");
-        expacted.setDebit("179.00");
-        expacted.setBalance("42'449.82");
+        final UbsTransactionDto expected = new UbsTransactionDto();
+        expected.setValuationDate("29.09.2017");
+        expected.setBankingRelationship("0235 00547895");
+        expected.setProduct("0235 00547895.01H");
+        expected.setIban("CH69 0023 5235 5478 9501 H");
+        expected.setCcy("CHF");
+        expected.setFromDate("01.07.2017");
+        expected.setToDate("30.09.2017");
+        expected.setDescription("UBS Business Current Account");
+        expected.setTradeDate("04.07.2017");
+        expected.setBookingDate("04.07.2017");
+        expected.setValueDate("04.07.2017");
+        expected.setDescription1("e-banking Order");
+        expected.setDescription2("swisscom");
+        expected.setDescription3("Wladimir Babitzki, 6206 Neuenkirch, E-Banking booktransfer");
+        expected.setTransactionNo("9935185TI2774507");
+        expected.setDebit("179.00");
+        expected.setBalance("42'449.82");
 
         //act
         final List<UbsTransactionDto> transactions = testee.readTransactions(is);
 
         //assert
         assertThat(transactions, hasSize(90));
-        assertThat(transactions.get(0), is(expacted));
+        assertThat(transactions.get(0), is(expected));
     }
 
     @Test
@@ -90,15 +90,15 @@ public class UbsTransactionReaderTest {
         //arrange
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_VALID_FILE);
-        final UbsBalanceDto expacted = new UbsBalanceDto();
-        expacted.setClosingBalance("59066.71");
-        expacted.setOpeningBalance("42628.82");
+        final UbsBalanceDto expected = new UbsBalanceDto();
+        expected.setClosingBalance("59066.71");
+        expected.setOpeningBalance("42628.82");
 
         //act
         final UbsBalanceDto balances = testee.readBalance(is);
 
         //assert
-        assertThat(balances, is(expacted));
+        assertThat(balances, is(expected));
     }
 
     @Test
@@ -106,25 +106,24 @@ public class UbsTransactionReaderTest {
         //arrange
         final UbsTransactionReader testee = new UbsTransactionReader();
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_MISSING_FIELDS_CSV);
-        final UbsTransactionDto expacted = new UbsTransactionDto();
-        expacted.setValuationDate("29.09.2017");
-        expacted.setBankingRelationship("0235 00547895");
-        expacted.setProduct("0235 00547895.01H");
-        expacted.setIban("CH69 0023 5235 5478 9501 H");
-        expacted.setCcy("CHF");
-        expacted.setFromDate("01.07.2017");
-        expacted.setToDate("30.09.2017");
-        expacted.setDescription("UBS Business Current Account");
-        expacted.setTradeDate("06.07.2017");
-        expacted.setBookingDate("06.07.2017");
-        expacted.setValueDate("06.07.2017");
-        expacted.setDescription1("E-Banking CHF domestic");
-        expacted.setTransactionNo("9935186TI3104156");
+        final UbsTransactionDto expected = new UbsTransactionDto();
+        expected.setValuationDate("29.09.2017");
+        expected.setBankingRelationship("0235 00547895");
+        expected.setProduct("0235 00547895.01H");
+        expected.setIban("CH69 0023 5235 5478 9501 H");
+        expected.setCcy("CHF");
+        expected.setFromDate("01.07.2017");
+        expected.setToDate("30.09.2017");
+        expected.setDescription("UBS Business Current Account");
+        expected.setTradeDate("06.07.2017");
+        expected.setBookingDate("06.07.2017");
+        expected.setValueDate("06.07.2017");
+        expected.setDescription1("E-Banking CHF domestic");
+        expected.setTransactionNo("9935186TI3104156");
         //act
         final List<UbsTransactionDto> lines = testee.readTransactions(is);
         //assert
-        assertThat(lines.get(0), is(expacted));
-
+        assertThat(lines.get(0), is(expected));
     }
 
 }
