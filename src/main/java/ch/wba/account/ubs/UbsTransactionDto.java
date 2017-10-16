@@ -1,8 +1,8 @@
 package ch.wba.account.ubs;
 
 
-import converters.BigDecimalConverter;
-import converters.LocalDateConverter;
+import ch.wba.account.converters.BigDecimalConverter;
+import ch.wba.account.converters.LocalDateConverter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

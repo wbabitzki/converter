@@ -1,4 +1,4 @@
-package converters;
+package ch.wba.account.converters;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -1,4 +1,4 @@
-package converters;
+package ch.wba.account.converters;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
