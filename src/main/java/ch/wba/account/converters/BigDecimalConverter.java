@@ -10,7 +10,7 @@ public class BigDecimalConverter {
 
     public static BigDecimal toAmount(String amountAsString) {
         try {
-            return new BigDecimal(AMOUNT_FORMATTER.parse(amountAsString).doubleValue());
+            return new BigDecimal(AMOUNT_FORMATTER.parse(amountAsString).toString());
         } catch (ParseException e) {
             throw new  IllegalArgumentException("Can not convert to number '" + amountAsString + "'");
         }
