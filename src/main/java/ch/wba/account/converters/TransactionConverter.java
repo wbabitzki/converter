@@ -1,6 +1,6 @@
 package ch.wba.account.converters;
 
-import ch.wba.account.TransactionDto;
+import ch.wba.account.AccountTransactionDto;
 import ch.wba.account.ubs.UbsTransactionDto;
 import org.apache.commons.lang.Validate;
 
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class TransactionConverter {
 
-    private static final BigDecimal TAX_PERCENTAGE = new BigDecimal(0.08);
+    private static final BigDecimal TAX_PERCENTAGE = new BigDecimal("0.08");
 
-    List<TransactionDto> convert(List<UbsTransactionDto> ubsTransactions) {
+    List<AccountTransactionDto> convert(List<UbsTransactionDto> ubsTransactions) {
         Validate.notNull(ubsTransactions);
         AtomicInteger count = new AtomicInteger(1);
         return ubsTransactions.stream()
@@ -31,9 +31,9 @@ public class TransactionConverter {
                         && (ubsTransactionDto.getDebit() != null || ubsTransactionDto.getCredit() != null);
     }
 
-    private Function<UbsTransactionDto, TransactionDto> mapTransaction(AtomicInteger count) {
+    private Function<UbsTransactionDto, AccountTransactionDto> mapTransaction(AtomicInteger count) {
         return source -> {
-            TransactionDto result = new TransactionDto();
+            AccountTransactionDto result = new AccountTransactionDto();
             result.setReceipt(Integer.toString(count.getAndIncrement()));
             result.setTransactionDate(source.getTradeDate());
             if (source.getCredit() != null) {
@@ -43,7 +43,7 @@ public class TransactionConverter {
             }
             result.setDescription(source.getDescription2());
             result.setTax(calculatePercentage(result.getTotalAmount(), TAX_PERCENTAGE));
-            result.setAmountBeforeTax(calculatePercentage(result.getTotalAmount(), BigDecimal.ONE.subtract(TAX_PERCENTAGE)));
+            result.setAmountBeforeTax(result.getTotalAmount().subtract(result.getTax()));
             return result;
         };
     }

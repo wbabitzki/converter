@@ -7,22 +7,22 @@ import java.math.BigDecimal;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TransactionDtoTest {
+public class AccountTransactionDtoTest {
 
     @Test
     public void toString_emptyValues_returnsOnlySeparators() {
         //arrange
-        TransactionDto testee = new TransactionDto();
+        AccountTransactionDto testee = new AccountTransactionDto();
         //act
         String result = testee.toString();
         //assert
-        assertThat(result, is(";;;;;"));
+        assertThat(result, is(";;;;;;;"));
     }
 
     @Test
     public void toString_allFieldsProvided_returnsCommaSeparatedValues() {
         //arrange
-        TransactionDto testee = new TransactionDto();
+        AccountTransactionDto testee = new AccountTransactionDto();
         testee.setReceipt("001");
         testee.setTransactionDate("08.04.1974");
         testee.setSourceAccount("TEST_SOURCE");

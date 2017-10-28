@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 
 import static ch.wba.account.converters.BigDecimalConverter.asString;
 
-public class TransactionDto {
+public class AccountTransactionDto {
 
     private String receipt;
     private LocalDate transactionDate;
@@ -110,7 +110,7 @@ public class TransactionDto {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final TransactionDto that = (TransactionDto) obj;
+        final AccountTransactionDto that = (AccountTransactionDto) obj;
 
         return new EqualsBuilder()
             .append(receipt, that.receipt)

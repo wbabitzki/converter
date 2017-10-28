@@ -1,6 +1,6 @@
 package ch.wba.account.converters;
 
-import ch.wba.account.TransactionDto;
+import ch.wba.account.AccountTransactionDto;
 import ch.wba.account.ubs.UbsTransactionDto;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public class TransactionConverterTest {
                 createUbsTransactionDto("300.00", null, null));
         TransactionConverter testee = new TransactionConverter();
         //act
-        List<TransactionDto> convertedTransactions = testee.convert(ubsTransactions);
+        List<AccountTransactionDto> convertedTransactions = testee.convert(ubsTransactions);
         //assert
         assertThat(convertedTransactions.size(), is(0));
     }
@@ -45,7 +45,7 @@ public class TransactionConverterTest {
                 createUbsTransactionDto(null, null, "300"));
         TransactionConverter testee = new TransactionConverter();
         //act
-        List<TransactionDto> convertedTransactions = testee.convert(ubsTransactions);
+        List<AccountTransactionDto> convertedTransactions = testee.convert(ubsTransactions);
         //assert
         assertThat(convertedTransactions.size(), is(2));
     }
@@ -58,11 +58,11 @@ public class TransactionConverterTest {
         ubsTransaction.setDescription2("Test Description");
         TransactionConverter testee = new TransactionConverter();
         //act
-        List<TransactionDto> convertedTransactions = testee.convert(Collections.singletonList(ubsTransaction));
+        List<AccountTransactionDto> convertedTransactions = testee.convert(Collections.singletonList(ubsTransaction));
         //assert
         assertThat(convertedTransactions.size(), is(1));
 
-        TransactionDto transaction = convertedTransactions.get(0);
+        AccountTransactionDto transaction = convertedTransactions.get(0);
 
         assertThat(transaction.getReceipt(), is("1"));
         assertThat(transaction.getTransactionDate(), is(LocalDateConverter.toDate("08.04.1974")));
