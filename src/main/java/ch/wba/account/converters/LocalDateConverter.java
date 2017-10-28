@@ -9,4 +9,8 @@ public class LocalDateConverter {
     public static LocalDate toDate(String dateAsString) {
         return  LocalDate.parse(dateAsString, DATE_FORMATTER);
     }
+
+    public static String toString(LocalDate date) {
+        return  date.format(DATE_FORMATTER);
+    }
 }
