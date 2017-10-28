@@ -43,6 +43,7 @@ public class TransactionConverter {
             }
             result.setDescription(source.getDescription2());
             result.setTax(calculatePercentage(result.getTotalAmount(), TAX_PERCENTAGE));
+            result.setAmountBeforeTax(calculatePercentage(result.getTotalAmount(), BigDecimal.ONE.subtract(TAX_PERCENTAGE)));
             return result;
         };
     }

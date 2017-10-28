@@ -6,6 +6,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.StringJoiner;
+
+import static ch.wba.account.converters.BigDecimalConverter.asString;
 
 public class TransactionDto {
 
@@ -16,7 +19,8 @@ public class TransactionDto {
     private BigDecimal totalAmount;
     private String description;
     private BigDecimal tax;
-    
+    private BigDecimal amountBeforeTax;
+
     public String getReceipt() {
         return receipt;
     }
@@ -57,10 +61,6 @@ public class TransactionDto {
         return totalAmount;
     }
 
-    public BigDecimal getAmountWithoutTax() {
-        return totalAmount.subtract(tax);
-    }
-
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
@@ -71,6 +71,14 @@ public class TransactionDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setAmountBeforeTax(BigDecimal amountBeforeTax) {
+        this.amountBeforeTax = amountBeforeTax;
+    }
+
+    public BigDecimal getAmountBeforeTax() {
+        return amountBeforeTax;
     }
 
     public BigDecimal getTax() {
@@ -114,4 +122,19 @@ public class TransactionDto {
             .append(tax, that.tax)
             .isEquals();
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(";")
+                .add(receipt == null ? "" : receipt)
+                .add(transactionDate == null ? "" : LocalDateConverter.toString(transactionDate))
+                .add(targetAccount == null ? "" : targetAccount)
+                .add(sourceAccount == null ? "" : sourceAccount)
+                .add(totalAmount == null ? "" : asString(totalAmount))
+                .add(amountBeforeTax == null ? "" : asString(amountBeforeTax))
+                .add(tax == null ? "" : asString(tax))
+                .add(description == null ? "" : description)
+                .toString();
+    }
+
 }

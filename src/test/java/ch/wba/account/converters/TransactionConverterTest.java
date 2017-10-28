@@ -69,7 +69,7 @@ public class TransactionConverterTest {
         assertThat(transaction.getDescription(), is("Test Description"));
         assertThat(transaction.getTotalAmount(), is(new BigDecimal("54")));
         assertThat(transaction.getTax(), is(new BigDecimal("4.00")));
-        assertThat(transaction.getAmountWithoutTax(), is(new BigDecimal("50.00")));
+        assertThat(transaction.getAmountBeforeTax(), is(new BigDecimal("50.00")));
     }
 
     private UbsTransactionDto createUbsTransactionDto(String debit, String credit, String balance) {
