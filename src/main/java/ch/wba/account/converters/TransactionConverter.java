@@ -16,7 +16,7 @@ public class TransactionConverter {
 
     private static final BigDecimal TAX_PERCENTAGE = new BigDecimal("0.08");
 
-    List<AccountTransactionDto> convert(List<UbsTransactionDto> ubsTransactions) {
+    public List<AccountTransactionDto> convert(List<UbsTransactionDto> ubsTransactions) {
         Validate.notNull(ubsTransactions);
         AtomicInteger count = new AtomicInteger(1);
         return ubsTransactions.stream()
@@ -28,7 +28,7 @@ public class TransactionConverter {
     private Predicate<UbsTransactionDto> isValuableTransaction() {
         return ubsTransactionDto ->
                 ubsTransactionDto.getBalance() != null
-                        && (ubsTransactionDto.getDebit() != null || ubsTransactionDto.getCredit() != null);
+                        && (isValidAmount(ubsTransactionDto.getDebit()) || isValidAmount(ubsTransactionDto.getCredit()));
     }
 
     private Function<UbsTransactionDto, AccountTransactionDto> mapTransaction(AtomicInteger count) {
@@ -36,9 +36,9 @@ public class TransactionConverter {
             AccountTransactionDto result = new AccountTransactionDto();
             result.setReceipt(Integer.toString(count.getAndIncrement()));
             result.setTransactionDate(source.getTradeDate());
-            if (source.getCredit() != null) {
+            if (isValidAmount(source.getCredit())) {
                 result.setTotalAmount(source.getCredit());
-            } else if (source.getDebit() != null) {
+            } else if (isValidAmount(source.getDebit())) {
                 result.setTotalAmount(source.getDebit());
             }
             result.setDescription(source.getDescription2());
@@ -46,6 +46,10 @@ public class TransactionConverter {
             result.setAmountBeforeTax(result.getTotalAmount().subtract(result.getTax()));
             return result;
         };
+    }
+
+    private boolean isValidAmount(BigDecimal amount) {
+        return amount != null && !amount.equals(BigDecimal.ZERO);
     }
 
     private static BigDecimal calculatePercentage(BigDecimal total, BigDecimal percentage) {

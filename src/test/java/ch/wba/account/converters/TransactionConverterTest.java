@@ -42,7 +42,9 @@ public class TransactionConverterTest {
         List<UbsTransactionDto> ubsTransactions = Arrays.asList(
                 createUbsTransactionDto("300", null, "500"),
                 createUbsTransactionDto(null,"300.00", "500"),
-                createUbsTransactionDto(null, null, "300"));
+                createUbsTransactionDto(null, null, "300"),
+                createUbsTransactionDto("0.00", null, "300"),
+                createUbsTransactionDto(null, "0.00", "300"));
         TransactionConverter testee = new TransactionConverter();
         //act
         List<AccountTransactionDto> convertedTransactions = testee.convert(ubsTransactions);
