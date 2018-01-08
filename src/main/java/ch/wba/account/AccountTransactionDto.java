@@ -16,6 +16,8 @@ public class AccountTransactionDto {
     private LocalDate transactionDate;
     private String targetAccount;
     private String sourceAccount;
+    private String sId;
+    private int sIdx;
     private BigDecimal totalAmount;
     private String description;
     private BigDecimal tax;
@@ -55,6 +57,22 @@ public class AccountTransactionDto {
 
     public void setSourceAccount(String sourceAccount) {
         this.sourceAccount = sourceAccount;
+    }
+
+    public String getsId() {
+        return sId;
+    }
+
+    public void setsId(String sId) {
+        this.sId = sId;
+    }
+
+    public int getsIdx() {
+        return sIdx;
+    }
+
+    public void setsIdx(int sIdx) {
+        this.sIdx = sIdx;
     }
 
     public BigDecimal getTotalAmount() {
