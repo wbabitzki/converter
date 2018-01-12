@@ -1,4 +1,4 @@
-package ch.wba.account;
+package ch.wba.accounting;
 
 import org.junit.Test;
 

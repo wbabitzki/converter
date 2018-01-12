@@ -1,6 +1,6 @@
-package ch.wba.account;
+package ch.wba.accounting;
 
-import ch.wba.account.converters.LocalDateConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.StringJoiner;
 
-import static ch.wba.account.converters.BigDecimalConverter.asString;
+import static ch.wba.accounting.converters.BigDecimalConverter.asString;
 
 public class AccountTransactionDto {
 

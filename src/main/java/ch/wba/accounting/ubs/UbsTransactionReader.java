@@ -1,4 +1,4 @@
-package ch.wba.account.ubs;
+package ch.wba.accounting.ubs;
 
 import org.apache.commons.lang.Validate;
 

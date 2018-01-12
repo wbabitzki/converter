@@ -1,4 +1,4 @@
-package ch.wba.account.converters;
+package ch.wba.accounting.converters;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

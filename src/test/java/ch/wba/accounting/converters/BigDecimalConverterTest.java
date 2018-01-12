@@ -1,11 +1,11 @@
-package ch.wba.account.converters;
+package ch.wba.accounting.converters;
 
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static ch.wba.account.converters.BigDecimalConverter.asString;
-import static ch.wba.account.converters.BigDecimalConverter.toAmount;
+import static ch.wba.accounting.converters.BigDecimalConverter.asString;
+import static ch.wba.accounting.converters.BigDecimalConverter.toAmount;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 

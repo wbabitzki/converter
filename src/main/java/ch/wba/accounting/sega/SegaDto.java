@@ -1,4 +1,4 @@
-package ch.wba.account.sega;
+package ch.wba.accounting.sega;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

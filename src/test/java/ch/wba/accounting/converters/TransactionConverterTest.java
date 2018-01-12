@@ -1,7 +1,7 @@
-package ch.wba.account.converters;
+package ch.wba.accounting.converters;
 
-import ch.wba.account.AccountTransactionDto;
-import ch.wba.account.ubs.UbsTransactionDto;
+import ch.wba.accounting.AccountTransactionDto;
+import ch.wba.accounting.ubs.UbsTransactionDto;
 import org.junit.Test;
 
 import java.math.BigDecimal;

@@ -1,10 +1,10 @@
-package ch.wba.account.starter;
+package ch.wba.accounting.starter;
 
-import ch.wba.account.AccountTransactionDto;
-import ch.wba.account.AccountTransactionWriter;
-import ch.wba.account.converters.TransactionConverter;
-import ch.wba.account.ubs.UbsTransactionDto;
-import ch.wba.account.ubs.UbsTransactionReader;
+import ch.wba.accounting.AccountTransactionDto;
+import ch.wba.accounting.AccountTransactionWriter;
+import ch.wba.accounting.converters.TransactionConverter;
+import ch.wba.accounting.ubs.UbsTransactionDto;
+import ch.wba.accounting.ubs.UbsTransactionReader;
 
 import java.io.File;
 import java.io.FileOutputStream;

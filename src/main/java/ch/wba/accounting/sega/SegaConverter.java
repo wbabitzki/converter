@@ -1,6 +1,6 @@
-package ch.wba.account.sega;
+package ch.wba.accounting.sega;
 
-import ch.wba.account.AccountTransactionDto;
+import ch.wba.accounting.AccountTransactionDto;
 
 import java.util.List;
 
