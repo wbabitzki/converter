@@ -37,22 +37,6 @@ public class TransactionConverterTest {
     }
 
     @Test
-    public void convert_ubsTransactionsWithoutDebitAndCredit_transactionsAreIgnored() {
-        //arrange
-        List<UbsTransactionDto> ubsTransactions = Arrays.asList(
-                createUbsTransactionDto("300", null, "500"),
-                createUbsTransactionDto(null,"300.00", "500"),
-                createUbsTransactionDto(null, null, "300"),
-                createUbsTransactionDto("0.00", null, "300"),
-                createUbsTransactionDto(null, "0.00", "300"));
-        TransactionConverter testee = new TransactionConverter();
-        //act
-        List<AccountTransactionDto> convertedTransactions = testee.convert(ubsTransactions);
-        //assert
-        assertThat(convertedTransactions.size(), is(2));
-    }
-
-    @Test
     public void convert_oneValidUbsTransaction_fieldsAreAssigned() {
         //arrange
         UbsTransactionDto ubsTransaction = createUbsTransactionDto("54", null, "300");
@@ -69,7 +53,7 @@ public class TransactionConverterTest {
         assertThat(transaction.getReceipt(), is("1"));
         assertThat(transaction.getTransactionDate(), is(LocalDateConverter.toDate("08.04.1974")));
         assertThat(transaction.getDescription(), is("Test Description"));
-        assertThat(transaction.getTotalAmount(), is(new BigDecimal("54")));
+        assertThat(transaction.getTotalAmount(), is(new BigDecimal("54.00")));
         assertThat(transaction.getTax(), is(new BigDecimal("4.00")));
         assertThat(transaction.getAmountBeforeTax(), is(new BigDecimal("50.00")));
     }

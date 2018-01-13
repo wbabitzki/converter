@@ -13,7 +13,7 @@ public class BigDecimalConverter {
 
     public static BigDecimal toAmount(String amountAsString) {
         try {
-            return new BigDecimal(FROM_STRING_FORMATTER.parse(amountAsString).toString());
+            return new BigDecimal(FROM_STRING_FORMATTER.parse(amountAsString).toString()).setScale(2, RoundingMode.HALF_UP);
         } catch (ParseException e) {
             throw new  IllegalArgumentException("Can not convert to number '" + amountAsString + "'");
         }

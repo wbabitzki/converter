@@ -14,7 +14,7 @@ public class BananaTransactionDto {
     private BigDecimal vatPct;
     private BigDecimal amountWithoutVat;
     private BigDecimal amountVat;
-    private String taxAccount;
+    private String vatAccount;
 
     public LocalDate getDate() {
         return date;
@@ -96,11 +96,11 @@ public class BananaTransactionDto {
         this.amountVat = amountVat;
     }
 
-    public String getTaxAccount() {
-        return taxAccount;
+    public String getVatAccount() {
+        return vatAccount;
     }
 
-    public void setTaxAccount(String taxAccount) {
-        this.taxAccount = taxAccount;
+    public void setVatAccount(String vatAccount) {
+        this.vatAccount = vatAccount;
     }
 }

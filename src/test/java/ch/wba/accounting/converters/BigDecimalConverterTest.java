@@ -14,7 +14,7 @@ public class BigDecimalConverterTest {
     @Test
     public void toAmount_numberAsString_converts() {
         assertThat(toAmount("200.02"), is(new BigDecimal("200.02")));
-        assertThat(toAmount("200"), is(new BigDecimal("200")));
+        assertThat(toAmount("200"), is(new BigDecimal("200.00")));
         assertThat(toAmount("2'000.55"), is(new BigDecimal("2000.55")));
     }
 
