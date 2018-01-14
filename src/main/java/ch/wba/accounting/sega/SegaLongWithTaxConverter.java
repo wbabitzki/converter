@@ -7,7 +7,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-public class SegaLongWithTaxConverter implements SegaConverter {
+public class SegaLongWithTaxConverter extends AbstractSegaConverter {
+
     @Override
     public List<SegaDto> toSegaTransactions(BananaTransactionDto accountTransaction) {
         SegaDto debit = createDefaultSegaDto(accountTransaction);
@@ -92,18 +93,6 @@ public class SegaLongWithTaxConverter implements SegaConverter {
         defaultDto.setmType(0);
         defaultDto.setFwBetrag(new BigDecimal("0"));
         defaultDto.setTx1(accountTransaction.getDescription());
-
-        return defaultDto;
-    }
-
-    private SegaDto createDefaultSegaDto(BananaTransactionDto transaction) {
-        SegaDto defaultDto = new SegaDto();
-
-        defaultDto.setBlg(transaction.getDocument());
-        defaultDto.setDatum(transaction.getDate());
-        defaultDto.setsId(transaction.getVatCode());
-        defaultDto.setFwBetrag(new BigDecimal("0"));
-        defaultDto.setTx1(transaction.getDescription());
 
         return defaultDto;
     }
