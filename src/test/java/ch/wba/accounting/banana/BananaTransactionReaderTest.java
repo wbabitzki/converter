@@ -58,6 +58,7 @@ public class BananaTransactionReaderTest {
         assertThat(transaction.getVatPct(), is(BigDecimalConverter.toAmount("-8.00")));
         assertThat(transaction.getAmountWithoutVat(), is(BigDecimalConverter.toAmount("13'888.89")));
         assertThat(transaction.getAmountVat(), is(BigDecimalConverter.toAmount("-1'111.11")));
+        assertThat(transaction.getVatAccount(), is("2201"));
     }
 
     @Test(expected = IllegalArgumentException.class)

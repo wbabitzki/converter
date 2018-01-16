@@ -28,7 +28,8 @@ public class BananaTransactionReader {
         VAT_CODE(6),
         VAT_PCT(8),
         AMOUNT_WITHOUT_VAT(10),
-        AMOUNT_VAT(11);
+        AMOUNT_VAT(11),
+        VAT_ACCOUNT(12);
 
         private int index;
 
@@ -78,6 +79,7 @@ public class BananaTransactionReader {
         if (StringUtils.isNotEmpty(amountVat)) {
             transaction.setAmountVat(BigDecimalConverter.toAmount(amountVat));
         }
+        transaction.setVatAccount(fields[Fields.VAT_ACCOUNT.getIndex()]);
         return transaction;
     }
 
