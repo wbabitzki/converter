@@ -1,12 +1,26 @@
 package ch.wba.accounting.sega;
 
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.StringJoiner;
 
 public class SegaDto {
     enum SOLL_HABEN {
-        SOLL,
-        HABEN
+        SOLL("S"),
+        HABEN("H");
+
+        private String code;
+        SOLL_HABEN(String code) {
+            this.code = code;
+        }
+
+        @Override
+        public String toString() {
+            return code;
+        }
     }
 
     private String blg;
@@ -188,5 +202,31 @@ public class SegaDto {
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(";")
+                .add(blg)
+                .add(LocalDateConverter.toString(datum))
+                .add(kto)
+                .add(transactionType.toString())
+                .add(grp)
+                .add(gKto)
+                .add(sId)
+                .add(Integer.toString(sIdx))
+                .add(Integer.toString(kIndx))
+                .add(Integer.toString(bType))
+                .add(Integer.toString(mType))
+                .add(code)
+                .add(BigDecimalConverter.asString(netto))
+                .add(BigDecimalConverter.asString(steuer))
+                .add(BigDecimalConverter.asString(fwBetrag))
+                .add(tx1)
+                .add(tx2)
+                .add(Integer.toString(pkKey))
+                .add(Integer.toString(opId))
+                .add(Integer.toString(flag))
+                .toString();
     }
 }

@@ -143,6 +143,6 @@ public class SegaLongWithTaxConverterTest {
         assertThat(result.get(2).getSteuer(), is(new BigDecimal("13888.89")));
         assertThat(result.get(2).getFwBetrag(), is(new BigDecimal("0")));
         assertThat(result.get(2).getTx1(), is("Test Description"));
-        assertThat(result.get(2).getTx2(), is("8%"));
+        assertThat(result.get(2).getTx2(), is("0.08%"));
     }
 }

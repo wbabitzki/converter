@@ -41,7 +41,8 @@ public class SegaLongWithTaxConverter extends AbstractSegaConverter {
         tax.setbType(2);
         tax.setNetto(accountTransaction.getAmountVat().abs());
         tax.setSteuer(accountTransaction.getAmountWithoutVat());
-        tax.setTx2(accountTransaction.getVatPct().multiply(new BigDecimal(100)).setScale(0) + "%");
+        tax.setTx2(accountTransaction.getVatPct().abs() + "%");
+
         return Arrays.asList(debit, credit, tax);
     }
 
