@@ -2,13 +2,11 @@ package ch.wba.accounting.banana;
 
 import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
+import com.opencsv.CSVReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -43,8 +41,15 @@ public class BananaTransactionReader {
     }
 
     protected static final Function<String, BananaTransactionDto> MAPPER = line -> {
-        final String[] fields = line.split(",", -1);
-        if (fields.length != EXPORT_FIELD_NUMBER) {
+        String[] fields;
+        final StringReader reader = new StringReader(line);
+
+        try (CSVReader csvReader = new CSVReader(reader)) {
+            fields = csvReader.readNext();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (fields == null || fields.length != EXPORT_FIELD_NUMBER) {
             return null;
         }
         if (!LocalDateConverter.isDate(fields[Fields.DATE.ordinal()])) {
