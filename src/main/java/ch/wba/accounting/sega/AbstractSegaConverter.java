@@ -10,13 +10,14 @@ public abstract class AbstractSegaConverter implements SegaConverter {
         SegaDto defaultDto = new SegaDto();
 
         defaultDto.setBlg(transaction.getDocument());
-        defaultDto.setGrp("");
+        defaultDto.setGrp(" ");
         defaultDto.setDatum(transaction.getDate());
         defaultDto.setsId(transaction.getVatCode());
         defaultDto.setCode("");
         defaultDto.setFwBetrag(new BigDecimal("0"));
         defaultDto.setTx1(transaction.getDescription());
-
+        defaultDto.setOpId("");
+        
         return defaultDto;
     }
 }

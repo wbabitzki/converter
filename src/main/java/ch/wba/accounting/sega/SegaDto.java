@@ -8,6 +8,9 @@ import java.time.LocalDate;
 import java.util.StringJoiner;
 
 public class SegaDto {
+
+    public static final String QUOTE_SYMBOL = "\"";
+
     enum SOLL_HABEN {
         SOLL("S"),
         HABEN("H");
@@ -41,7 +44,7 @@ public class SegaDto {
     private String tx1;
     private String tx2;
     private int pkKey;
-    private int opId;
+    private String opId;
     private int flag;
 
     public String getBlg() {
@@ -188,11 +191,11 @@ public class SegaDto {
         this.pkKey = pkKey;
     }
 
-    public int getOpId() {
+    public String getOpId() {
         return opId;
     }
 
-    public void setOpId(int opId) {
+    public void setOpId(String opId) {
         this.opId = opId;
     }
 
@@ -206,7 +209,7 @@ public class SegaDto {
 
     @Override
     public String toString() {
-        return new StringJoiner(";")
+        return new StringJoiner(",")
                 .add(blg)
                 .add(LocalDateConverter.toString(datum))
                 .add(kto)
@@ -218,15 +221,19 @@ public class SegaDto {
                 .add(Integer.toString(kIndx))
                 .add(Integer.toString(bType))
                 .add(Integer.toString(mType))
-                .add(code)
+                .add(inQuotes(code))
                 .add(BigDecimalConverter.asString(netto))
                 .add(BigDecimalConverter.asString(steuer))
                 .add(BigDecimalConverter.asString(fwBetrag))
-                .add(tx1)
-                .add(tx2)
+                .add(inQuotes(tx1))
+                .add(inQuotes(tx2))
                 .add(Integer.toString(pkKey))
-                .add(Integer.toString(opId))
+                .add(opId)
                 .add(Integer.toString(flag))
                 .toString();
+    }
+
+    private String inQuotes(String text) {
+        return QUOTE_SYMBOL + text +QUOTE_SYMBOL;
     }
 }
