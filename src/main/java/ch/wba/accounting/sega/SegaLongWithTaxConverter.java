@@ -30,6 +30,7 @@ public class SegaLongWithTaxConverter extends AbstractSegaConverter {
         credit.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
         credit.setgKto(accountTransaction.getDebitAccount());
         credit.setsId("");
+        credit.setmType(1);
         credit.setNetto(accountTransaction.getAmount());
         credit.setSteuer(BigDecimal.ZERO);
         credit.setTx2("");
@@ -39,6 +40,7 @@ public class SegaLongWithTaxConverter extends AbstractSegaConverter {
         tax.setgKto(accountTransaction.getDebitAccount());
         tax.setsId("");
         tax.setbType(2);
+        tax.setmType(1);
         tax.setNetto(accountTransaction.getAmountVat().abs());
         tax.setSteuer(accountTransaction.getAmountWithoutVat());
         tax.setTx2(accountTransaction.getVatPct().abs() + "%");
