@@ -12,7 +12,7 @@ public abstract class AbstractSegaConverter implements SegaConverter {
         defaultDto.setBlg(transaction.getDocument());
         defaultDto.setGrp(" ");
         defaultDto.setDatum(transaction.getDate());
-        defaultDto.setsId(transaction.getVatCode());
+        defaultDto.setsId("");
         defaultDto.setCode("");
         defaultDto.setFwBetrag(new BigDecimal("0"));
         defaultDto.setTx1(transaction.getDescription());

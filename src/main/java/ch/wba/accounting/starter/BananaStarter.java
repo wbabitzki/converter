@@ -16,7 +16,7 @@ public class BananaStarter {
         List<BananaTransactionDto> bananaTransaction = new BananaTransactionReader().readTransactions(is);
 
         ConverterFactory converterFactory = new ConverterFactory();
-        converterFactory.register(transaction -> (transaction.getAmountVat() != null), new SegaLongWithTaxConverter());
+        converterFactory.register(transaction -> (transaction.getAmountVat() != null), new SegaExpensesWithVatConverter());
         converterFactory.register(transaction -> (transaction.getAmountVat() == null), new SegaWithoutTaxConverter());
 
         List<SegaDto> segaDtos = new ArrayList<>();

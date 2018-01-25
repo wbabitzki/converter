@@ -7,45 +7,25 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-public class SegaLongWithTaxConverter extends AbstractSegaConverter {
+public class SegaExpensesWithVatConverter extends AbstractSegaThreeRecordConverter {
 
     @Override
-    public List<SegaDto> toSegaTransactions(BananaTransactionDto accountTransaction) {
-        SegaDto debit = createDefaultSegaDto(accountTransaction);
-        SegaDto credit = createDefaultSegaDto(accountTransaction);
-        SegaDto tax = createDefaultSegaDto(accountTransaction);
+    protected SegaDto adjustFirstRecord(SegaDto sega, BananaTransactionDto accountTransaction){
+        sega.setsId(accountTransaction.getVatCode());
+        sega.setsIdx(3);
+        sega.setSteuer(accountTransaction.getAmountVat().abs());
+        return sega;
+    }
 
-        debit.setKto(accountTransaction.getDebitAccount());
-        debit.setTransactionType(SegaDto.SOLL_HABEN.SOLL);
-        debit.setgKto(accountTransaction.getCreditAccount());
-        debit.setsId(accountTransaction.getVatCode());
-        debit.setsIdx(3);
-        debit.setbType(0);
-        debit.setNetto(accountTransaction.getAmountWithoutVat());
-        debit.setSteuer(accountTransaction.getAmountVat().abs());
-        debit.setmType(1);
-        debit.setTx2("");
+    @Override
+    protected SegaDto adjustSecondRecord(SegaDto sega, BananaTransactionDto accountTransaction){
+        return sega;
+    }
 
-        credit.setKto(accountTransaction.getCreditAccount());
-        credit.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
-        credit.setgKto(accountTransaction.getDebitAccount());
-        credit.setsId("");
-        credit.setmType(1);
-        credit.setNetto(accountTransaction.getAmount());
-        credit.setSteuer(BigDecimal.ZERO);
-        credit.setTx2("");
-
-        tax.setTransactionType(SegaDto.SOLL_HABEN.SOLL);
-        tax.setKto(accountTransaction.getVatAccount());
-        tax.setgKto(accountTransaction.getDebitAccount());
-        tax.setsId("");
-        tax.setbType(2);
-        tax.setmType(1);
-        tax.setNetto(accountTransaction.getAmountVat().abs());
-        tax.setSteuer(accountTransaction.getAmountWithoutVat());
-        tax.setTx2(accountTransaction.getVatPct().abs() + "%");
-
-        return Arrays.asList(debit, credit, tax);
+    @Override
+    protected SegaDto adjustThirdRecord(SegaDto sega, BananaTransactionDto accountTransaction){
+        sega.setTransactionType(SegaDto.SOLL_HABEN.SOLL);
+        return sega;
     }
 
     @Override
