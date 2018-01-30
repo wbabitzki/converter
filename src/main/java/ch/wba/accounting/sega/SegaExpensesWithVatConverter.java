@@ -11,14 +11,12 @@ public class SegaExpensesWithVatConverter extends AbstractSegaThreeRecordConvert
 
     @Override
     protected SegaDto adjustFirstRecord(SegaDto sega, BananaTransactionDto accountTransaction){
-        sega.setsId(accountTransaction.getVatCode());
-        sega.setsIdx(3);
-        sega.setSteuer(accountTransaction.getAmountVat().abs());
-        return sega;
+        return makeAsVatTransaction(sega, accountTransaction);
     }
 
     @Override
     protected SegaDto adjustSecondRecord(SegaDto sega, BananaTransactionDto accountTransaction){
+        sega.setNetto(accountTransaction.getAmount());
         return sega;
     }
 

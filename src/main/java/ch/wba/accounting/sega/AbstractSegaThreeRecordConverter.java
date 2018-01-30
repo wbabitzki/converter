@@ -25,7 +25,6 @@ abstract public class AbstractSegaThreeRecordConverter extends AbstractSegaConve
         sega.setKto(accountTransaction.getDebitAccount());
         sega.setTransactionType(SegaDto.SOLL_HABEN.SOLL);
         sega.setgKto(accountTransaction.getCreditAccount());
-        sega.setNetto(accountTransaction.getAmountWithoutVat());
         return sega;
     }
 
@@ -34,7 +33,6 @@ abstract public class AbstractSegaThreeRecordConverter extends AbstractSegaConve
         sega.setKto(accountTransaction.getCreditAccount());
         sega.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
         sega.setgKto(accountTransaction.getDebitAccount());
-        sega.setNetto(accountTransaction.getAmount());
         sega.setSteuer(BigDecimal.ZERO);
         return sega;
     }
@@ -51,11 +49,19 @@ abstract public class AbstractSegaThreeRecordConverter extends AbstractSegaConve
     }
 
     @Override
-    protected SegaDto createDefaultSegaDto(BananaTransactionDto transaction) {
+    final protected SegaDto createDefaultSegaDto(BananaTransactionDto transaction) {
          final SegaDto  sega = super.createDefaultSegaDto(transaction);
          sega.setmType(1);
          sega.setTx2("");
          return sega;
+    }
+
+    final protected SegaDto makeAsVatTransaction(SegaDto sega, BananaTransactionDto accountTransaction) {
+        sega.setsId(accountTransaction.getVatCode());
+        sega.setsIdx(3);
+        sega.setNetto(accountTransaction.getAmountWithoutVat());
+        sega.setSteuer(accountTransaction.getAmountVat().abs());
+        return sega;
     }
 
     abstract protected SegaDto adjustFirstRecord(SegaDto sega, BananaTransactionDto accountTransaction);

@@ -14,7 +14,8 @@ public abstract class AbstractSegaConverter implements SegaConverter {
         defaultDto.setDatum(transaction.getDate());
         defaultDto.setsId("");
         defaultDto.setCode("");
-        defaultDto.setFwBetrag(new BigDecimal("0"));
+        defaultDto.setSteuer(BigDecimal.ZERO);
+        defaultDto.setFwBetrag(BigDecimal.ZERO);
         defaultDto.setTx1(transaction.getDescription());
         defaultDto.setOpId("");
         
