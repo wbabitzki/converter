@@ -5,6 +5,7 @@ import ch.wba.accounting.banana.BananaTransactionReader;
 import ch.wba.accounting.sega.*;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,12 @@ public class BananaStarter {
         List<BananaTransactionDto> bananaTransaction = new BananaTransactionReader().readTransactions(is);
 
         ConverterFactory converterFactory = new ConverterFactory();
-        converterFactory.register(transaction -> (transaction.getAmountVat() != null), new SegaExpensesWithVatConverter());
+        converterFactory.register(transaction ->
+                (transaction.getAmountVat() != null && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0),
+                new SegaExpensesWithVatConverter());
+        converterFactory.register(transaction ->
+                        (transaction.getAmountVat() != null && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0),
+                new SegaIncomeWithVatConverter());
         converterFactory.register(transaction -> (transaction.getAmountVat() == null), new SegaWithoutTaxConverter());
 
         List<SegaDto> segaDtos = new ArrayList<>();
