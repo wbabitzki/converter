@@ -17,13 +17,9 @@ public class BananaStarter {
         List<BananaTransactionDto> bananaTransaction = new BananaTransactionReader().readTransactions(is);
 
         ConverterFactory converterFactory = new ConverterFactory();
-        converterFactory.register(transaction ->
-                (transaction.getAmountVat() != null && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0),
-                new SegaExpensesWithVatConverter());
-        converterFactory.register(transaction ->
-                        (transaction.getAmountVat() != null && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0),
-                new SegaIncomeWithVatConverter());
-        converterFactory.register(transaction -> (transaction.getAmountVat() == null), new SegaWithoutTaxConverter());
+        converterFactory.register(BananaStarter::isExpensesWithVat, new SegaExpensesWithVatConverter());
+        converterFactory.register(BananaStarter::isIncomeWithVat, new SegaIncomeWithVatConverter());
+        converterFactory.register(BananaStarter::isWithoutVat, new SegaWithoutTaxConverter());
 
         List<SegaDto> segaDtos = new ArrayList<>();
         for (BananaTransactionDto transaction : bananaTransaction) {
@@ -39,5 +35,17 @@ public class BananaStarter {
         }
         writer.close();
 
+    }
+
+    private static boolean isExpensesWithVat(BananaTransactionDto transaction) {
+        return !isWithoutVat(transaction) && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0;
+    }
+
+    private static boolean isIncomeWithVat(BananaTransactionDto transaction) {
+        return !isWithoutVat(transaction) && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0;
+    }
+
+    private static boolean isWithoutVat(BananaTransactionDto transaction) {
+        return transaction.getAmountVat() == null;
     }
 }
