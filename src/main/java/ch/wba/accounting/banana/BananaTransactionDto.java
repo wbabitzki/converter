@@ -1,7 +1,12 @@
 package ch.wba.accounting.banana;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BananaTransactionDto {
     private LocalDate date;
@@ -15,6 +20,8 @@ public class BananaTransactionDto {
     private BigDecimal amountWithoutVat;
     private BigDecimal amountVat;
     private String vatAccount;
+
+    private List<BananaTransactionDto> composedTransactions = new ArrayList<>();
 
     public LocalDate getDate() {
         return date;
@@ -102,5 +109,24 @@ public class BananaTransactionDto {
 
     public void setVatAccount(String vatAccount) {
         this.vatAccount = vatAccount;
+    }
+
+    public List<BananaTransactionDto> getComposedTransactions() {
+        return Collections.unmodifiableList(composedTransactions);
+    }
+
+    public void addComposedTransaction(BananaTransactionDto transaction) {
+        this.composedTransactions.add(transaction);
+    }
+
+    public boolean isComposedTransaction() {
+        return !this.composedTransactions.isEmpty();
+    }
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append(document)
+                .append(description)
+                .toString();
     }
 }

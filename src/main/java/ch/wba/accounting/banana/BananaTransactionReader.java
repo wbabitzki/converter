@@ -7,9 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 import java.io.*;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class BananaTransactionReader {
@@ -58,6 +58,16 @@ public class BananaTransactionReader {
         return createTransaction(fields);
     };
 
+    protected static final Collector<BananaTransactionDto, ?, LinkedHashMap<String, BananaTransactionDto>> COMPOSED_TRANSACTION_COLLECTOR = Collectors.toMap(
+            BananaTransactionDto::getDocument,
+            t -> t,
+            (main, additional) -> {
+                main.addComposedTransaction(additional);
+                return main;
+            },
+            LinkedHashMap::new
+    );
+
     private static BananaTransactionDto createTransaction(String[] fields) {
         BananaTransactionDto transaction = new BananaTransactionDto();
 
@@ -93,10 +103,13 @@ public class BananaTransactionReader {
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
             final List<String> lines = buffer.lines().collect(Collectors.toList());
             Validate.notEmpty(lines, "The imported list ist empty");
-            return lines.stream() //
+
+            Map<String, BananaTransactionDto> transactions = lines.stream() //
                     .map(MAPPER)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .collect(COMPOSED_TRANSACTION_COLLECTOR);
+
+            return new ArrayList<>(transactions.values());
         }
     }
 }

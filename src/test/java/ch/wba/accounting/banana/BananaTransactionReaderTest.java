@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -94,6 +96,37 @@ public class BananaTransactionReaderTest {
         //act
         final List<BananaTransactionDto> transactions = testee.readTransactions(is);
         //assert
-        assertThat(transactions, hasSize(17));
+        assertThat(transactions, hasSize(11));
     }
+
+    @Test
+    public void composedTransactionsCollector_mixedBananaDtos_returnsComposedDtos() {
+        //arrange
+        final BananaTransactionDto firstSimple = createBananaDto("1", "First simple");
+        final BananaTransactionDto firstComposed = createBananaDto("2", "First composed");
+        final BananaTransactionDto secondComposed = createBananaDto("2", "Second composed");
+        final BananaTransactionDto secondSimple = createBananaDto("3", "Second simple");
+        final List<BananaTransactionDto> input = Arrays.asList(firstSimple, firstComposed, secondComposed, secondSimple);
+        //act
+        List<BananaTransactionDto> result = new ArrayList<>(input.stream()
+                .collect(BananaTransactionReader.COMPOSED_TRANSACTION_COLLECTOR)
+                .values());
+        //assert
+        assertThat(result.size(), is(3));
+        assertThat(result.get(0), is(firstSimple));
+        assertFalse(result.get(0).isComposedTransaction());
+        assertThat(result.get(1), is(firstComposed));
+        assertThat(result.get(1).getComposedTransactions().get(0), is(secondComposed));
+        assertTrue(result.get(1).isComposedTransaction());
+        assertThat(result.get(2), is(secondSimple));
+        assertFalse(result.get(2).isComposedTransaction());
+    }
+
+    private BananaTransactionDto createBananaDto(String document, String description) {
+        final BananaTransactionDto firstSimple = new BananaTransactionDto();
+        firstSimple.setDocument(document);
+        firstSimple.setDescription(description);
+        return firstSimple;
+    }
+
 }
