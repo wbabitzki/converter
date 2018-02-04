@@ -34,7 +34,6 @@ public class BananaStarter {
             writer.write("\n");
         }
         writer.close();
-
     }
 
     private static boolean isExpensesWithVat(BananaTransactionDto transaction) {
