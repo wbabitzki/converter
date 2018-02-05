@@ -20,6 +20,7 @@ public class BananaStarter {
         converterFactory.register(BananaStarter::isExpensesWithVat, new SegaExpensesWithVatConverter());
         converterFactory.register(BananaStarter::isIncomeWithVat, new SegaIncomeWithVatConverter());
         converterFactory.register(BananaStarter::isWithoutVat, new SegaWithoutTaxConverter());
+        converterFactory.register(BananaStarter::isComposed, new SegaComposedConverter());
 
         List<SegaDto> segaDtos = new ArrayList<>();
         for (BananaTransactionDto transaction : bananaTransaction) {
@@ -31,20 +32,26 @@ public class BananaStarter {
                 new FileOutputStream("test.csv"), StandardCharsets.UTF_8));
         for (SegaDto transaction : segaDtos) {
             writer.write(transaction.toString() + "");
-            writer.write("\n");
+            writer.write("\r\n");
         }
         writer.close();
     }
 
     private static boolean isExpensesWithVat(BananaTransactionDto transaction) {
-        return !isWithoutVat(transaction) && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0;
+        return !isWithoutVat(transaction) && !isComposed(transaction)
+                && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0;
     }
 
     private static boolean isIncomeWithVat(BananaTransactionDto transaction) {
-        return !isWithoutVat(transaction) && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0;
+        return !isWithoutVat(transaction) && !isComposed(transaction)
+                && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0;
     }
 
     private static boolean isWithoutVat(BananaTransactionDto transaction) {
-        return transaction.getAmountVat() == null;
+        return !isComposed(transaction) && transaction.getAmountVat() == null;
+    }
+
+    private static boolean isComposed(BananaTransactionDto transaction) {
+        return transaction.isComposedTransaction();
     }
 }
