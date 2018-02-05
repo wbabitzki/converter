@@ -1,6 +1,5 @@
 package ch.wba.accounting.sega;
 
-import ch.wba.accounting.AccountTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionDto;
 
 import java.math.BigDecimal;
@@ -8,10 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SegaWithoutTaxConverter extends AbstractSegaConverter {
-    @Override
-    public List<SegaDto> toSegaTransactions(AccountTransactionDto accountTransaction) {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public List<SegaDto> toSegaTransactions(BananaTransactionDto transaction) {

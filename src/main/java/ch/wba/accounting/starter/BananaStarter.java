@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BananaStarter {
     public static void main(String[] args) throws IOException {
-        final InputStream is = Starter.class.getClassLoader().getResourceAsStream("Export Banana - 2017.csv");
+        final InputStream is = BananaStarter.class.getClassLoader().getResourceAsStream("Export Banana - 2017.csv");
 
         List<BananaTransactionDto> bananaTransaction = new BananaTransactionReader().readTransactions(is);
 

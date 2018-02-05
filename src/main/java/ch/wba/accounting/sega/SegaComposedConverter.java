@@ -1,6 +1,5 @@
 package ch.wba.accounting.sega;
 
-import ch.wba.accounting.AccountTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionDto;
 
 import java.util.ArrayList;
@@ -10,11 +9,6 @@ public class SegaComposedConverter extends AbstractSegaConverter {
 
     private SegaConverter converterWithoutVat = new SegaWithoutVatShortConverter();
     private SegaConverter converterWithVat = new SegaWithVatShortConverter();
-
-    @Override
-    public List<SegaDto> toSegaTransactions(AccountTransactionDto accountTransaction) {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public List<SegaDto> toSegaTransactions(BananaTransactionDto transaction) {
