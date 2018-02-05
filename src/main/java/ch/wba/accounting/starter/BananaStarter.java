@@ -28,13 +28,12 @@ public class BananaStarter {
             segaDtos.addAll(converter.toSegaTransactions(transaction));
         }
 
-        Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("test.csv"), StandardCharsets.UTF_8));
-        for (SegaDto transaction : segaDtos) {
-            writer.write(transaction.toString() + "");
-            writer.write("\r\n");
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test.csv"), StandardCharsets.UTF_8))) {
+            writer.write("Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag\r\n");
+            for (SegaDto transaction : segaDtos) {
+                writer.write(transaction.toString() + "\r\n");
+            }
         }
-        writer.close();
     }
 
     private static boolean isExpensesWithVat(BananaTransactionDto transaction) {
