@@ -17,7 +17,7 @@ public class AccountTransactionWriterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructor_streamIsNull_throwsException() {
-        AccountTransactionWriter testee = new AccountTransactionWriter(null);
+       new AccountTransactionWriter(null);
     }
 
     @Test(expected = IllegalArgumentException.class)

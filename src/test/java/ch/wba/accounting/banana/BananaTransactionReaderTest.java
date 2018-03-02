@@ -70,7 +70,7 @@ public class BananaTransactionReaderTest {
     }
 
     @Test
-    public void map_emptyOptionalValues_valuesAreNull() throws IOException {
+    public void map_emptyOptionalValues_valuesAreNull() {
         //arrange
         final String input = "05.01.2018,2,Bareinzahlung Kasse,1000,1020,2'000.00,,,,,,,,,,,";
         //act
