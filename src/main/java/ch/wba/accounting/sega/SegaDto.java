@@ -1,22 +1,20 @@
 package ch.wba.accounting.sega;
 
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.StringJoiner;
 
-public class SegaDto {
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
 
+public class SegaDto {
     public static final String QUOTE_SYMBOL = "\"";
 
-    enum SOLL_HABEN {
-        SOLL("S"),
-        HABEN("H");
+    public enum SOLL_HABEN {
+            SOLL("S"), HABEN("H");
+        private final String code;
 
-        private String code;
-        SOLL_HABEN(String code) {
+        SOLL_HABEN(final String code) {
             this.code = code;
         }
 
@@ -51,7 +49,7 @@ public class SegaDto {
         return blg;
     }
 
-    public void setBlg(String blg) {
+    public void setBlg(final String blg) {
         this.blg = blg;
     }
 
@@ -59,7 +57,7 @@ public class SegaDto {
         return datum;
     }
 
-    public void setDatum(LocalDate datum) {
+    public void setDatum(final LocalDate datum) {
         this.datum = datum;
     }
 
@@ -67,7 +65,7 @@ public class SegaDto {
         return kto;
     }
 
-    public void setKto(String kto) {
+    public void setKto(final String kto) {
         this.kto = kto;
     }
 
@@ -75,7 +73,7 @@ public class SegaDto {
         return transactionType;
     }
 
-    public void setTransactionType(SOLL_HABEN transactionType) {
+    public void setTransactionType(final SOLL_HABEN transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -83,7 +81,7 @@ public class SegaDto {
         return grp;
     }
 
-    public void setGrp(String grp) {
+    public void setGrp(final String grp) {
         this.grp = grp;
     }
 
@@ -91,7 +89,7 @@ public class SegaDto {
         return gKto;
     }
 
-    public void setgKto(String gKto) {
+    public void setgKto(final String gKto) {
         this.gKto = gKto;
     }
 
@@ -99,7 +97,7 @@ public class SegaDto {
         return sId;
     }
 
-    public void setsId(String sId) {
+    public void setsId(final String sId) {
         this.sId = sId;
     }
 
@@ -107,7 +105,7 @@ public class SegaDto {
         return sIdx;
     }
 
-    public void setsIdx(int sIdx) {
+    public void setsIdx(final int sIdx) {
         this.sIdx = sIdx;
     }
 
@@ -115,7 +113,7 @@ public class SegaDto {
         return kIndx;
     }
 
-    public void setkIndx(int kIndx) {
+    public void setkIndx(final int kIndx) {
         this.kIndx = kIndx;
     }
 
@@ -123,7 +121,7 @@ public class SegaDto {
         return bType;
     }
 
-    public void setbType(int bType) {
+    public void setbType(final int bType) {
         this.bType = bType;
     }
 
@@ -131,7 +129,7 @@ public class SegaDto {
         return mType;
     }
 
-    public void setmType(int mType) {
+    public void setmType(final int mType) {
         this.mType = mType;
     }
 
@@ -139,7 +137,7 @@ public class SegaDto {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -147,7 +145,7 @@ public class SegaDto {
         return netto;
     }
 
-    public void setNetto(BigDecimal netto) {
+    public void setNetto(final BigDecimal netto) {
         this.netto = netto;
     }
 
@@ -155,7 +153,7 @@ public class SegaDto {
         return steuer;
     }
 
-    public void setSteuer(BigDecimal steuer) {
+    public void setSteuer(final BigDecimal steuer) {
         this.steuer = steuer;
     }
 
@@ -163,7 +161,7 @@ public class SegaDto {
         return fwBetrag;
     }
 
-    public void setFwBetrag(BigDecimal fwBetrag) {
+    public void setFwBetrag(final BigDecimal fwBetrag) {
         this.fwBetrag = fwBetrag;
     }
 
@@ -171,7 +169,7 @@ public class SegaDto {
         return tx1;
     }
 
-    public void setTx1(String tx1) {
+    public void setTx1(final String tx1) {
         this.tx1 = tx1;
     }
 
@@ -179,7 +177,7 @@ public class SegaDto {
         return tx2;
     }
 
-    public void setTx2(String tx2) {
+    public void setTx2(final String tx2) {
         this.tx2 = tx2;
     }
 
@@ -187,7 +185,7 @@ public class SegaDto {
         return pkKey;
     }
 
-    public void setPkKey(int pkKey) {
+    public void setPkKey(final int pkKey) {
         this.pkKey = pkKey;
     }
 
@@ -195,7 +193,7 @@ public class SegaDto {
         return opId;
     }
 
-    public void setOpId(String opId) {
+    public void setOpId(final String opId) {
         this.opId = opId;
     }
 
@@ -203,37 +201,19 @@ public class SegaDto {
         return flag;
     }
 
-    public void setFlag(int flag) {
+    public void setFlag(final int flag) {
         this.flag = flag;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(",")
-                .add(blg)
-                .add(LocalDateConverter.toString(datum))
-                .add(kto)
-                .add(transactionType.toString())
-                .add(grp)
-                .add(gKto)
-                .add(sId)
-                .add(Integer.toString(sIdx))
-                .add(Integer.toString(kIndx))
-                .add(Integer.toString(bType))
-                .add(Integer.toString(mType))
-                .add(inQuotes(code))
-                .add(BigDecimalConverter.asString(netto))
-                .add(BigDecimalConverter.asString(steuer))
-                .add(BigDecimalConverter.asString(fwBetrag))
-                .add(inQuotes(tx1))
-                .add(inQuotes(tx2))
-                .add(Integer.toString(pkKey))
-                .add(opId)
-                .add(Integer.toString(flag))
-                .toString();
+        return new StringJoiner(",").add(blg).add(LocalDateConverter.toString(datum)).add(kto).add(transactionType.toString()).add(grp).add(gKto).add(sId).add(Integer.toString(sIdx))
+            .add(Integer.toString(kIndx)).add(Integer.toString(bType)).add(Integer.toString(mType)).add(inQuotes(code)).add(BigDecimalConverter.asString(netto))
+            .add(BigDecimalConverter.asString(steuer)).add(BigDecimalConverter.asString(fwBetrag)).add(inQuotes(tx1)).add(inQuotes(tx2)).add(Integer.toString(pkKey)).add(opId)
+            .add(Integer.toString(flag)).toString();
     }
 
-    private String inQuotes(String text) {
-        return QUOTE_SYMBOL + text +QUOTE_SYMBOL;
+    private String inQuotes(final String text) {
+        return QUOTE_SYMBOL + text + QUOTE_SYMBOL;
     }
 }

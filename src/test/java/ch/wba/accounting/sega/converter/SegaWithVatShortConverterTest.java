@@ -1,16 +1,17 @@
-package ch.wba.accounting.sega;
+package ch.wba.accounting.sega.converter;
+
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import ch.wba.accounting.sega.SegaDto;
 
 public class SegaWithVatShortConverterTest {
     private SegaConverter testee;
@@ -23,7 +24,7 @@ public class SegaWithVatShortConverterTest {
     @Test
     public void toSegaTransactions_standardInput_createsShortRecordWithoutVat() {
         //arrange
-        BananaTransactionDto input = new BananaTransactionDto();
+        final BananaTransactionDto input = new BananaTransactionDto();
         input.setDate(LocalDateConverter.toDate("20.01.2015"));
         input.setDocument("11");
         input.setDescription("Digital Ocean, div. Mat. USD");
@@ -34,7 +35,7 @@ public class SegaWithVatShortConverterTest {
         input.setAmountVat(BigDecimalConverter.toAmount("6.65"));
         input.setVatCode("VSB80");
         //act
-        List<SegaDto> result = testee.toSegaTransactions(input);
+        final List<SegaDto> result = testee.toSegaTransactions(input);
         //assert
         assertThat(result, hasSize(2));
         assertThat(result.get(0).toString(), is("11,20.01.2015,6210,S, ,1020,VSB80,0,0,0,2,\"\",83.35,6.65,0.00,\"Digital Ocean, div. Mat. USD\",\"\",0,,0"));

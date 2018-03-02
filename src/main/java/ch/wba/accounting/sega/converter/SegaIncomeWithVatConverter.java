@@ -1,6 +1,7 @@
-package ch.wba.accounting.sega;
+package ch.wba.accounting.sega.converter;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.sega.SegaDto;
 
 public class SegaIncomeWithVatConverter extends AbstractSegaThreeRecordConverter {
     @Override

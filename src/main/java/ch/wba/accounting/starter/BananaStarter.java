@@ -3,6 +3,11 @@ package ch.wba.accounting.starter;
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionReader;
 import ch.wba.accounting.sega.*;
+import ch.wba.accounting.sega.converter.SegaComposedConverter;
+import ch.wba.accounting.sega.converter.SegaConverter;
+import ch.wba.accounting.sega.converter.SegaExpensesWithVatConverter;
+import ch.wba.accounting.sega.converter.SegaIncomeWithVatConverter;
+import ch.wba.accounting.sega.converter.SegaWithoutTaxConverter;
 
 import java.io.*;
 import java.math.BigDecimal;

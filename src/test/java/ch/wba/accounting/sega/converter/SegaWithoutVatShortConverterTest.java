@@ -1,8 +1,12 @@
-package ch.wba.accounting.sega;
+package ch.wba.accounting.sega.converter;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
+import ch.wba.accounting.sega.SegaDto;
+import ch.wba.accounting.sega.converter.SegaConverter;
+import ch.wba.accounting.sega.converter.SegaWithoutVatShortConverter;
+
 import org.junit.Before;
 import org.junit.Test;
 

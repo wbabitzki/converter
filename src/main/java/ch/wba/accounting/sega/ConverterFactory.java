@@ -1,6 +1,7 @@
 package ch.wba.accounting.sega;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.sega.converter.SegaConverter;
 
 import java.util.HashMap;
 import java.util.Map;

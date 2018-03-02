@@ -1,32 +1,32 @@
-package ch.wba.accounting.sega;
+package ch.wba.accounting.sega.converter;
 
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
+import ch.wba.accounting.sega.SegaDto;
 
 public class SegaWithoutTaxConverterTest {
-
     private SegaConverter testee;
 
     @Before
     public void setUp() {
         testee = new SegaWithoutTaxConverter();
     }
-    
+
     @Test
     public void toSegaTransactin_bananaTransactionWithoutVat_fieldsAreAssigned() {
         //arrange
-        BananaTransactionDto input = new BananaTransactionDto();
+        final BananaTransactionDto input = new BananaTransactionDto();
         input.setDate(LocalDateConverter.toDate("30.08.2017"));
         input.setDocument("1");
         input.setDescription("Test Description");
@@ -34,10 +34,9 @@ public class SegaWithoutTaxConverterTest {
         input.setCreditAccount("1020");
         input.setAmount(BigDecimalConverter.toAmount("15000"));
         //act
-        List<SegaDto> result = testee.toSegaTransactions(input);
+        final List<SegaDto> result = testee.toSegaTransactions(input);
         //assert
         Assert.assertThat(result, hasSize(2));
-
         assertThat(result.get(0).getDatum(), is(LocalDateConverter.toDate("30.08.2017")));
         assertThat(result.get(0).getBlg(), is("1"));
         assertThat(result.get(0).getTransactionType(), is(SegaDto.SOLL_HABEN.SOLL));
@@ -52,7 +51,6 @@ public class SegaWithoutTaxConverterTest {
         assertThat(result.get(0).getFwBetrag(), is(new BigDecimal("0")));
         assertThat(result.get(0).getTx1(), is("Test Description"));
         assertThat(result.get(0).getTx2(), is(""));
-
         assertThat(result.get(1).getDatum(), is(LocalDateConverter.toDate("30.08.2017")));
         assertThat(result.get(1).getBlg(), is("1"));
         assertThat(result.get(1).getTransactionType(), is(SegaDto.SOLL_HABEN.HABEN));
