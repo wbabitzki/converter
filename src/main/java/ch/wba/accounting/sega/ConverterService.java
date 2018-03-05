@@ -1,11 +1,15 @@
 package ch.wba.accounting.sega;
 
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.sega.converter.*;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.sega.converter.SegaComposedConverter;
+import ch.wba.accounting.sega.converter.SegaConverter;
+import ch.wba.accounting.sega.converter.SegaExpensesWithVatConverter;
+import ch.wba.accounting.sega.converter.SegaIncomeWithVatConverter;
+import ch.wba.accounting.sega.converter.SegaWithoutTaxConverter;
 
 public class ConverterService {
 

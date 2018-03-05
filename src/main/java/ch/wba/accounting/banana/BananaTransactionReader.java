@@ -12,8 +12,8 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
@@ -99,7 +99,7 @@ public class BananaTransactionReader {
     }
 
     public List<BananaTransactionDto> readTransactions(final BufferedReader buffer) {
-        Validate.notNull(buffer);
+        Validate.isTrue(buffer != null);
         final List<String> lines = buffer.lines().collect(Collectors.toList());
         Validate.notEmpty(lines, "The imported list ist empty");
         final Map<String, BananaTransactionDto> transactions = lines.stream() //

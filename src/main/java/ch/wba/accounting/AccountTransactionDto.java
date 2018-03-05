@@ -1,17 +1,17 @@
 package ch.wba.accounting;
 
-import ch.wba.accounting.converters.LocalDateConverter;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import static ch.wba.accounting.converters.BigDecimalConverter.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.StringJoiner;
 
-import static ch.wba.accounting.converters.BigDecimalConverter.asString;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import ch.wba.accounting.converters.LocalDateConverter;
 
 public class AccountTransactionDto {
-
     private String receipt;
     private LocalDate transactionDate;
     private String targetAccount;
@@ -27,7 +27,7 @@ public class AccountTransactionDto {
         return receipt;
     }
 
-    public void setReceipt(String receipt) {
+    public void setReceipt(final String receipt) {
         this.receipt = receipt;
     }
 
@@ -35,11 +35,11 @@ public class AccountTransactionDto {
         return transactionDate;
     }
 
-    public void setTransactionDate(LocalDate transactionDate) {
+    public void setTransactionDate(final LocalDate transactionDate) {
         this.transactionDate = transactionDate;
     }
 
-    public void setTransactionDate(String transactionDate) {
+    public void setTransactionDate(final String transactionDate) {
         this.transactionDate = LocalDateConverter.toDate(transactionDate);
     }
 
@@ -47,7 +47,7 @@ public class AccountTransactionDto {
         return targetAccount;
     }
 
-    public void setTargetAccount(String targetAccount) {
+    public void setTargetAccount(final String targetAccount) {
         this.targetAccount = targetAccount;
     }
 
@@ -55,7 +55,7 @@ public class AccountTransactionDto {
         return sourceAccount;
     }
 
-    public void setSourceAccount(String sourceAccount) {
+    public void setSourceAccount(final String sourceAccount) {
         this.sourceAccount = sourceAccount;
     }
 
@@ -63,7 +63,7 @@ public class AccountTransactionDto {
         return sId;
     }
 
-    public void setsId(String sId) {
+    public void setsId(final String sId) {
         this.sId = sId;
     }
 
@@ -71,7 +71,7 @@ public class AccountTransactionDto {
         return sIdx;
     }
 
-    public void setsIdx(int sIdx) {
+    public void setsIdx(final int sIdx) {
         this.sIdx = sIdx;
     }
 
@@ -79,7 +79,7 @@ public class AccountTransactionDto {
         return totalAmount;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
+    public void setTotalAmount(final BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -87,11 +87,11 @@ public class AccountTransactionDto {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
-    public void setAmountBeforeTax(BigDecimal amountBeforeTax) {
+    public void setAmountBeforeTax(final BigDecimal amountBeforeTax) {
         this.amountBeforeTax = amountBeforeTax;
     }
 
@@ -103,25 +103,25 @@ public class AccountTransactionDto {
         return tax;
     }
 
-    public void setTax(BigDecimal tax) {
+    public void setTax(final BigDecimal tax) {
         this.tax = tax;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(receipt)
-            .append(transactionDate)
-            .append(targetAccount)
-            .append(sourceAccount)
-            .append(totalAmount)
-            .append(description)
-            .append(tax)
+        return new HashCodeBuilder() //
+            .append(receipt) //
+            .append(transactionDate) //
+            .append(targetAccount) //
+            .append(sourceAccount) // 
+            .append(totalAmount) //
+            .append(description) //
+            .append(tax) //
             .toHashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -129,30 +129,28 @@ public class AccountTransactionDto {
             return false;
         }
         final AccountTransactionDto that = (AccountTransactionDto) obj;
-
-        return new EqualsBuilder()
-            .append(receipt, that.receipt)
-            .append(transactionDate, that.transactionDate)
-            .append(targetAccount, that.targetAccount)
-            .append(sourceAccount, that.sourceAccount)
-            .append(totalAmount, that.totalAmount)
-            .append(description, that.description)
-            .append(tax, that.tax)
+        return new EqualsBuilder() //
+            .append(receipt, that.receipt) //
+            .append(transactionDate, that.transactionDate) //
+            .append(targetAccount, that.targetAccount) //
+            .append(sourceAccount, that.sourceAccount) //
+            .append(totalAmount, that.totalAmount) //
+            .append(description, that.description) //
+            .append(tax, that.tax) //
             .isEquals();
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(";")
-                .add(receipt == null ? "" : receipt)
-                .add(transactionDate == null ? "" : LocalDateConverter.toString(transactionDate))
-                .add(targetAccount == null ? "" : targetAccount)
-                .add(sourceAccount == null ? "" : sourceAccount)
-                .add(totalAmount == null ? "" : asString(totalAmount))
-                .add(amountBeforeTax == null ? "" : asString(amountBeforeTax))
-                .add(tax == null ? "" : asString(tax))
-                .add(description == null ? "" : description)
-                .toString();
+        return new StringJoiner(";") //
+            .add(receipt == null ? "" : receipt) //
+            .add(transactionDate == null ? "" : LocalDateConverter.toString(transactionDate))//
+            .add(targetAccount == null ? "" : targetAccount) //
+            .add(sourceAccount == null ? "" : sourceAccount) //
+            .add(totalAmount == null ? "" : asString(totalAmount)) //
+            .add(amountBeforeTax == null ? "" : asString(amountBeforeTax)) //
+            .add(tax == null ? "" : asString(tax)) //
+            .add(description == null ? "" : description) //
+            .toString();
     }
-
 }

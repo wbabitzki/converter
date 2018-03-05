@@ -1,11 +1,11 @@
 package ch.wba.accounting.sega;
 
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.StringJoiner;
+
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
 
 public class SegaDto {
     protected static final String[] HEADERS = { "Kto", "S/H", "Grp", "GKto", "SId", "SIdx", "KIdx", "BTyp", "MTyp", "Code", //
