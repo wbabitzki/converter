@@ -1,24 +1,23 @@
 package ch.wba.accounting.banana;
 
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
-import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
 
 public class BananaTransactionReaderTest {
-
     private static final String TEST_VALID_FILE = "test-banana.csv";
-
     private BananaTransactionReader testee;
 
     @Before
@@ -29,7 +28,7 @@ public class BananaTransactionReaderTest {
     @Test
     public void map_emptyString_returnsNull() {
         //act
-        BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply("");
+        final BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply("");
         //assert
         assertNull(transaction);
     }
@@ -37,7 +36,7 @@ public class BananaTransactionReaderTest {
     @Test
     public void map_notDateFirst_returnsNull() {
         //act
-        BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply("foo,boo,qoo,doo");
+        final BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply("foo,boo,qoo,doo");
         //assert
         assertNull(transaction);
     }
@@ -90,13 +89,14 @@ public class BananaTransactionReaderTest {
     }
 
     @Test
-    public void readTransactions_validFile_expectedLineCount() throws IOException {
+    public void readTransactions_validFile_expectedLineCount() {
         //arrange
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_VALID_FILE);
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         //act
-        final List<BananaTransactionDto> transactions = testee.readTransactions(is);
+        final List<BananaTransactionDto> transactions = testee.readTransactions(reader);
         //assert
-        assertThat(transactions, hasSize(11));
+        assertThat(transactions.size(), is(11));
     }
 
     @Test
@@ -108,9 +108,7 @@ public class BananaTransactionReaderTest {
         final BananaTransactionDto secondSimple = createBananaDto("3", "Second simple");
         final List<BananaTransactionDto> input = Arrays.asList(firstSimple, firstComposed, secondComposed, secondSimple);
         //act
-        List<BananaTransactionDto> result = new ArrayList<>(input.stream()
-                .collect(BananaTransactionReader.COMPOSED_TRANSACTION_COLLECTOR)
-                .values());
+        final List<BananaTransactionDto> result = new ArrayList<>(input.stream().collect(BananaTransactionReader.COMPOSED_TRANSACTION_COLLECTOR).values());
         //assert
         assertThat(result.size(), is(3));
         assertThat(result.get(0), is(firstSimple));
@@ -122,11 +120,10 @@ public class BananaTransactionReaderTest {
         assertFalse(result.get(2).isComposedTransaction());
     }
 
-    private BananaTransactionDto createBananaDto(String document, String description) {
+    private BananaTransactionDto createBananaDto(final String document, final String description) {
         final BananaTransactionDto firstSimple = new BananaTransactionDto();
         firstSimple.setDocument(document);
         firstSimple.setDescription(description);
         return firstSimple;
     }
-
 }
