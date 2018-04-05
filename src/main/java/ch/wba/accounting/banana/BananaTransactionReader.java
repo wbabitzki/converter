@@ -47,12 +47,11 @@ public class BananaTransactionReader {
     }
 
     protected static final Function<String, BananaTransactionDto> MAPPER = line -> {
-        String[] fields;
-        final StringReader reader = new StringReader(line);
-        try (CSVReader csvReader = new CSVReader(reader)) {
+        String[] fields = null;
+        try (CSVReader csvReader = new CSVReader(new StringReader(line))) {
             fields = csvReader.readNext();
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("A line cannot be read: " + e.getMessage());
         }
         if (fields == null || fields.length != EXPORT_FIELD_NUMBER) {
             return null;
@@ -62,13 +61,17 @@ public class BananaTransactionReader {
         }
         return createTransaction(fields);
     };
-    protected static final Collector<BananaTransactionDto, ?, LinkedHashMap<String, BananaTransactionDto>> COMPOSED_TRANSACTION_COLLECTOR = Collectors.toMap(BananaTransactionDto::getDocument, //
-        t -> t, //
-        (main, additional) -> {
-            main.addComposedTransaction(additional);
-            return main;
-        }, //
-        LinkedHashMap::new);
+    //
+    // Creates a map with the document identifier as keys and transactions as values
+    // The transactions with the same document are added to the first transaction into the composedTransaction list
+    protected static final Collector<BananaTransactionDto, ?, LinkedHashMap<String, BananaTransactionDto>> COMPOSED_TRANSACTION_COLLECTOR = //
+        Collectors.toMap(BananaTransactionDto::getDocument, // key
+            t -> t, // value
+            (main, additional) -> {
+                main.addComposedTransaction(additional);
+                return main;
+            }, // merge function for the transaction with the same document identifier
+            LinkedHashMap::new);
 
     private static BananaTransactionDto createTransaction(final String[] fields) {
         final BananaTransactionDto transaction = new BananaTransactionDto();
