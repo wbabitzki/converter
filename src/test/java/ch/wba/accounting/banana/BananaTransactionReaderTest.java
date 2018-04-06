@@ -1,7 +1,9 @@
 package ch.wba.accounting.banana;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -10,11 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 public class BananaTransactionReaderTest {
     private static final String TEST_VALID_FILE = "test-banana.csv";
@@ -28,7 +27,7 @@ public class BananaTransactionReaderTest {
     @Test
     public void map_emptyString_returnsNull() {
         //act
-        final BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply("");
+        final BananaTransactionDto transaction = BananaTransactionReader.STRING_TO_DTO_MAPPER.apply("");
         //assert
         assertNull(transaction);
     }
@@ -36,7 +35,7 @@ public class BananaTransactionReaderTest {
     @Test
     public void map_notDateFirst_returnsNull() {
         //act
-        final BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply("foo,boo,qoo,doo");
+        final BananaTransactionDto transaction = BananaTransactionReader.STRING_TO_DTO_MAPPER.apply("foo,boo,qoo,doo");
         //assert
         assertNull(transaction);
     }
@@ -46,7 +45,7 @@ public class BananaTransactionReaderTest {
         //arrange
         final String input = "05.01.2018,1,Zahlungseingang Rechnung 103,1020,3000,15'000.00,B80,,-8,-8,13'888.89,-1'111.11,2201,,,-1'111.11,";
         //act
-        final BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply(input);
+        final BananaTransactionDto transaction = BananaTransactionReader.STRING_TO_DTO_MAPPER.apply(input);
         //assert
         assertNotNull(transaction);
         assertThat(transaction.getDate(), is(LocalDateConverter.toDate("05.01.2018")));
@@ -63,7 +62,7 @@ public class BananaTransactionReaderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void read_null_throwsException() throws Exception {
+    public void read_null_throwsException() {
         //act
         testee.readTransactions(null);
     }
@@ -73,7 +72,7 @@ public class BananaTransactionReaderTest {
         //arrange
         final String input = "05.01.2018,2,Bareinzahlung Kasse,1000,1020,2'000.00,,,,,,,,,,,";
         //act
-        final BananaTransactionDto transaction = BananaTransactionReader.MAPPER.apply(input);
+        final BananaTransactionDto transaction = BananaTransactionReader.STRING_TO_DTO_MAPPER.apply(input);
         //assert
         assertNotNull(transaction);
         assertThat(transaction.getDate(), is(LocalDateConverter.toDate("05.01.2018")));
@@ -118,6 +117,37 @@ public class BananaTransactionReaderTest {
         assertTrue(result.get(1).isComposedTransaction());
         assertThat(result.get(2), is(secondSimple));
         assertFalse(result.get(2).isComposedTransaction());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void adjustRoundedVats_roundedVatWithoutMainTransaction_throwsException() {
+        //arrange
+        BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
+        BananaTransactionDto roundedTransaction = createBananaDto("2", "Rounded transaction");
+        roundedTransaction.setVatCode(BananaTransactionReader.ROUNDED_VAT_CODE);
+        List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
+        //act
+        testee.adjustRoundedVats(transactions);
+    }
+
+    @Test
+    public void adjustRoundedVats_roundedVatWithMainTransaction_adjustedToRoundedAmount() {
+        //arrange
+        BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
+        firstTransaction.setAmount(BigDecimalConverter.toAmount("83.85"));
+        firstTransaction.setAmountVat(BigDecimalConverter.toAmount("5.99"));
+        firstTransaction.setAmountWithoutVat(BigDecimalConverter.toAmount("77.86"));
+        BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
+        roundedTransaction.setVatCode(BananaTransactionReader.ROUNDED_VAT_CODE);
+        roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("0.01"));
+        List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
+        //act
+        List<BananaTransactionDto> result = testee.adjustRoundedVats(transactions);
+        //assert
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0).getAmount(), is(BigDecimalConverter.toAmount("83.85")));
+        assertThat(result.get(0).getAmountWithoutVat(), is(BigDecimalConverter.toAmount("77.85")));
+        assertThat(result.get(0).getAmountVat(), is(BigDecimalConverter.toAmount("6.00")));
     }
 
     private BananaTransactionDto createBananaDto(final String document, final String description) {
