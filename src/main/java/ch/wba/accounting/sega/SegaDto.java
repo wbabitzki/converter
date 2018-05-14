@@ -8,8 +8,8 @@ import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
 
 public class SegaDto {
-    protected static final String[] HEADERS = { "Kto", "S/H", "Grp", "GKto", "SId", "SIdx", "KIdx", "BTyp", "MTyp", "Code", //
-            "Netto", "Steuer", "FW-Betrag", "Tx1", "Tx2", "PkKey", "OpId", "Flag" };
+    protected static final String[] HEADERS = { "Blg", "Datum", "Kto", "S/H", "Grp", "GKto", "SId", "SIdx", "KIdx", "BTyp", "MTyp", "Code", //
+        "Netto", "Steuer", "FW-Betrag", "Tx1", "Tx2", "PkKey", "OpId", "Flag" };
     private static final String QUOTE_SYMBOL = "\"";
     private static final String DELIMITER = ",";
 
@@ -211,26 +211,26 @@ public class SegaDto {
     @Override
     public String toString() {
         return new StringJoiner(DELIMITER)//
-                .add(blg) //
-                .add(LocalDateConverter.toString(datum)) //
-                .add(kto) //
-                .add(transactionType.toString()) //
-                .add(grp) //
-                .add(gKto) //
-                .add(sId) //
-                .add(Integer.toString(sIdx)) //
-                .add(Integer.toString(kIndx)).add(Integer.toString(bType)) //
-                .add(Integer.toString(mType)) //
-                .add(inQuotes(code)) //
-                .add(BigDecimalConverter.asString(netto)) //
-                .add(BigDecimalConverter.asString(steuer)) //
-                .add(BigDecimalConverter.asString(fwBetrag)) //
-                .add(inQuotes(tx1)) //
-                .add(inQuotes(tx2)) //
-                .add(Integer.toString(pkKey)) //
-                .add(opId) //
-                .add(Integer.toString(flag)) //
-                .toString();
+            .add(blg) //
+            .add(LocalDateConverter.toString(datum)) //
+            .add(kto) //
+            .add(transactionType.toString()) //
+            .add(grp) //
+            .add(gKto) //
+            .add(sId) //
+            .add(Integer.toString(sIdx)) //
+            .add(Integer.toString(kIndx)).add(Integer.toString(bType)) //
+            .add(Integer.toString(mType)) //
+            .add(inQuotes(code)) //
+            .add(BigDecimalConverter.asString(netto)) //
+            .add(BigDecimalConverter.asString(steuer)) //
+            .add(BigDecimalConverter.asString(fwBetrag)) //
+            .add(inQuotes(tx1)) //
+            .add(inQuotes(tx2)) //
+            .add(Integer.toString(pkKey)) //
+            .add(opId) //
+            .add(Integer.toString(flag)) //
+            .toString();
     }
 
     private String inQuotes(final String text) {

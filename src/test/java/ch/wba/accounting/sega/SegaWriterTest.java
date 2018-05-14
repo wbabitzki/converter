@@ -1,7 +1,8 @@
 package ch.wba.accounting.sega;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -11,13 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Matchers.endsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SegaWriterTest {
-    private static final String TEST_HEADER = "Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag\r\n";
+    private static final String TEST_HEADER = "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag\r\n";
     private static final ArrayList<SegaDto> TEST_EMPTY_LIST = new ArrayList<>();
     private SegaWriter testee;
 
@@ -52,7 +51,7 @@ public class SegaWriterTest {
     public void write_threeSegaDto_writeThreeLines() throws IOException {
         //arrange
         final Writer writer = mock(Writer.class);
-        List<SegaDto> list = Arrays.asList(createSegaDto(), createSegaDto(), createSegaDto());
+        final List<SegaDto> list = Arrays.asList(createSegaDto(), createSegaDto(), createSegaDto());
         //act
         testee.write(writer, list);
         //assert
@@ -61,7 +60,7 @@ public class SegaWriterTest {
     }
 
     private SegaDto createSegaDto() {
-        SegaDto segaDto = new SegaDto();
+        final SegaDto segaDto = new SegaDto();
         segaDto.setDatum(LocalDate.now());
         segaDto.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
         segaDto.setNetto(BigDecimal.ZERO);
