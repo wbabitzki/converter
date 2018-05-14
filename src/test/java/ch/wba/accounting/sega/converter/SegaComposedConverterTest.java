@@ -35,6 +35,6 @@ public class SegaComposedConverterTest {
         final List<SegaDto> result = testee.toSegaTransactions(input);
         //assert
         assertThat(result, hasSize(1));
-        assertThat(result.get(0).toString(), is("11,20.01.2015,1020,H, ,div,,0,0,0,2,\"\",564.20,0.00,0.00,\"UBS, VGA\",\"\",0,,0"));
+        assertThat(result.get(0).toString(), is("11,20.1.2015,1020,H, ,div,,0,0,0,2,\"\",564.20,0.00,0.00,\"UBS, VGA\",\"\",0,,0"));
     }
 }

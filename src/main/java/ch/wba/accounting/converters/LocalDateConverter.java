@@ -5,23 +5,27 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class LocalDateConverter {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
 
-    public static LocalDate toDate(String dateAsString) {
-        return  LocalDate.parse(dateAsString, DATE_FORMATTER);
+    private LocalDateConverter() {
+        // Empty
     }
 
-    public static boolean isDate(String dateAsString) {
+    public static LocalDate toDate(final String dateAsString) {
+        return LocalDate.parse(dateAsString, DATE_FORMATTER);
+    }
+
+    public static boolean isDate(final String dateAsString) {
         LocalDate date = null;
         try {
             date = LocalDate.parse(dateAsString, DATE_FORMATTER);
-        }  catch (DateTimeParseException e) {
-           return false;
+        } catch (final DateTimeParseException e) {
+            return false;
         }
         return date != null;
     }
 
-    public static String toString(LocalDate date) {
-        return  date.format(DATE_FORMATTER);
+    public static String toString(final LocalDate date) {
+        return date.format(DATE_FORMATTER);
     }
 }
