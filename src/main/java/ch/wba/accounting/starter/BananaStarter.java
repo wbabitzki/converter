@@ -1,19 +1,27 @@
 package ch.wba.accounting.starter;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionReader;
 import ch.wba.accounting.sega.ConverterService;
 import ch.wba.accounting.sega.SegaDto;
 import ch.wba.accounting.sega.SegaWriter;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 public class BananaStarter {
     public static void main(final String[] args) {
         List<BananaTransactionDto> bananaTransaction = null;
-        final String inputEncoding = args.length == 3 ? args[1] : "UTF-8";
+        final String inputEncoding = args.length == 2 ? args[1] : "UTF-8";
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(args[0])), inputEncoding))) {
             bananaTransaction = new BananaTransactionReader().readTransactions(reader);
         } catch (final FileNotFoundException e) {
