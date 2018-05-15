@@ -16,6 +16,9 @@ import ch.wba.accounting.converters.LocalDateConverter;
 import ch.wba.accounting.sega.SegaDto;
 
 public class SegaIncomeWithVatConverterTest {
+    private static final String TEST_VAT_ACCOUNT = "2200";
+    private static final String TEST_CREDIT_ACCOUNT = "3400";
+    private static final String TEST_DEBIT_ACCOUNT = "1020";
     private SegaConverter testee;
 
     @Before
@@ -30,22 +33,22 @@ public class SegaIncomeWithVatConverterTest {
         input.setDate(LocalDateConverter.toDate("13.01.2018"));
         input.setDocument("1");
         input.setDescription("Test Description");
-        input.setDebitAccount("1020");
-        input.setCreditAccount("3400");
+        input.setDebitAccount(TEST_DEBIT_ACCOUNT);
+        input.setCreditAccount(TEST_CREDIT_ACCOUNT);
         input.setAmount(BigDecimalConverter.toAmount("15000"));
         input.setVatCode("USt80");
         input.setVatPct(BigDecimalConverter.toAmount("0.08"));
         input.setAmountWithoutVat(BigDecimalConverter.toAmount("13888.89"));
         input.setAmountVat(BigDecimalConverter.toAmount("-1111.11"));
-        input.setVatAccount("2200");
+        input.setVatAccount(TEST_VAT_ACCOUNT);
         //act
         final List<SegaDto> result = testee.toSegaTransactions(input);
         //assert
         Assert.assertThat(result, hasSize(3));
         assertThat(result.get(0).getBlg(), is("1"));
         assertThat(result.get(0).getTransactionType(), is(SegaDto.SOLL_HABEN.SOLL));
-        assertThat(result.get(0).getKto(), is("1020"));
-        assertThat(result.get(0).getgKto(), is("3400"));
+        assertThat(result.get(0).getKto(), is(TEST_DEBIT_ACCOUNT));
+        assertThat(result.get(0).getgKto(), is(TEST_CREDIT_ACCOUNT));
         assertThat(result.get(0).getsId(), is(""));
         assertThat(result.get(0).getsIdx(), is(0));
         assertThat(result.get(0).getkIndx(), is(0));
@@ -56,10 +59,11 @@ public class SegaIncomeWithVatConverterTest {
         assertThat(result.get(0).getFwBetrag(), is(BigDecimal.ZERO));
         assertThat(result.get(0).getTx1(), is("Test Description"));
         assertThat(result.get(0).getTx2(), is(""));
+        //
         assertThat(result.get(1).getBlg(), is("1"));
         assertThat(result.get(1).getTransactionType(), is(SegaDto.SOLL_HABEN.HABEN));
-        assertThat(result.get(1).getKto(), is("3400"));
-        assertThat(result.get(1).getgKto(), is("1020"));
+        assertThat(result.get(1).getKto(), is(TEST_CREDIT_ACCOUNT));
+        assertThat(result.get(1).getgKto(), is(TEST_DEBIT_ACCOUNT));
         assertThat(result.get(1).getsId(), is("USt80"));
         assertThat(result.get(1).getsIdx(), is(3));
         assertThat(result.get(1).getkIndx(), is(0));
@@ -70,10 +74,11 @@ public class SegaIncomeWithVatConverterTest {
         assertThat(result.get(1).getFwBetrag(), is(BigDecimal.ZERO));
         assertThat(result.get(1).getTx1(), is("Test Description"));
         assertThat(result.get(1).getTx2(), is(""));
+        //
         assertThat(result.get(2).getBlg(), is("1"));
         assertThat(result.get(2).getTransactionType(), is(SegaDto.SOLL_HABEN.HABEN));
-        assertThat(result.get(2).getKto(), is("2200"));
-        assertThat(result.get(2).getgKto(), is("1020"));
+        assertThat(result.get(2).getKto(), is(TEST_VAT_ACCOUNT));
+        assertThat(result.get(2).getgKto(), is(TEST_DEBIT_ACCOUNT));
         assertThat(result.get(2).getsId(), is(""));
         assertThat(result.get(2).getsIdx(), is(0));
         assertThat(result.get(2).getkIndx(), is(0));

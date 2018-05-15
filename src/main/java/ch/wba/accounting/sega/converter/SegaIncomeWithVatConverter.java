@@ -5,19 +5,20 @@ import ch.wba.accounting.sega.SegaDto;
 
 public class SegaIncomeWithVatConverter extends AbstractSegaThreeRecordConverter {
     @Override
-    protected SegaDto adjustFirstRecord(SegaDto sega, BananaTransactionDto accountTransaction) {
+    protected SegaDto adjustFirstRecord(final SegaDto sega, final BananaTransactionDto accountTransaction) {
         sega.setNetto(accountTransaction.getAmount());
         return sega;
     }
 
     @Override
-    protected SegaDto adjustSecondRecord(SegaDto sega, BananaTransactionDto accountTransaction) {
+    protected SegaDto adjustSecondRecord(final SegaDto sega, final BananaTransactionDto accountTransaction) {
         return makeAsVatTransaction(sega, accountTransaction);
     }
 
     @Override
-    protected SegaDto adjustThirdRecord(SegaDto sega, BananaTransactionDto accountTransaction) {
+    protected SegaDto adjustThirdRecord(final SegaDto sega, final BananaTransactionDto accountTransaction) {
         sega.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
+        sega.setgKto(accountTransaction.getDebitAccount());
         return sega;
     }
 }

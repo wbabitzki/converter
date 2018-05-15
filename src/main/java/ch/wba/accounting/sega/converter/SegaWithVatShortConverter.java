@@ -1,12 +1,12 @@
 package ch.wba.accounting.sega.converter;
 
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.sega.SegaDto;
 import java.util.Arrays;
 import java.util.List;
 
-public class SegaWithVatShortConverter extends AbstractSegaConverter {
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.sega.SegaDto;
 
+public class SegaWithVatShortConverter extends AbstractSegaConverter {
     @Override
     public List<SegaDto> toSegaTransactions(final BananaTransactionDto transaction) {
         final SegaDto debit = createDefaultSegaDto(transaction);
@@ -18,9 +18,9 @@ public class SegaWithVatShortConverter extends AbstractSegaConverter {
         debit.setSteuer(transaction.getAmountVat());
         debit.setmType(2);
         debit.setTx2("");
-
+        //
         final SegaDto tax = createDefaultSegaDto(transaction);
-        tax.setKto(transaction.getDebitAccount());
+        tax.setKto(transaction.getVatAccount());
         tax.setTransactionType(SegaDto.SOLL_HABEN.SOLL);
         tax.setgKto(transaction.getCreditAccount());
         tax.setNetto(transaction.getAmountVat());

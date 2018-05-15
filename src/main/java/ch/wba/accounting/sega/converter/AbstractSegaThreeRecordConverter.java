@@ -1,35 +1,34 @@
 package ch.wba.accounting.sega.converter;
 
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.sega.SegaDto;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.sega.SegaDto;
+
 abstract public class AbstractSegaThreeRecordConverter extends AbstractSegaConverter {
-
     @Override
-    public List<SegaDto> toSegaTransactions(BananaTransactionDto accountTransaction) {
-        SegaDto debit = createFirstTransaction(accountTransaction);
-        SegaDto credit = createSecondTransaction(accountTransaction);
-        SegaDto tax = createThirdTransaction(accountTransaction);
-
-        return Arrays.asList(
-                adjustFirstRecord(debit, accountTransaction),
-                adjustSecondRecord(credit,accountTransaction),
-                adjustThirdRecord(tax, accountTransaction));
+    public List<SegaDto> toSegaTransactions(final BananaTransactionDto accountTransaction) {
+        final SegaDto debit = createFirstTransaction(accountTransaction);
+        final SegaDto credit = createSecondTransaction(accountTransaction);
+        final SegaDto tax = createThirdTransaction(accountTransaction);
+        return Arrays.asList( //
+            adjustFirstRecord(debit, accountTransaction), //
+            adjustSecondRecord(credit, accountTransaction), //
+            adjustThirdRecord(tax, accountTransaction));
     }
 
-    private SegaDto createFirstTransaction(BananaTransactionDto accountTransaction) {
-        SegaDto sega = createDefaultSegaDto(accountTransaction);
+    private SegaDto createFirstTransaction(final BananaTransactionDto accountTransaction) {
+        final SegaDto sega = createDefaultSegaDto(accountTransaction);
         sega.setKto(accountTransaction.getDebitAccount());
         sega.setTransactionType(SegaDto.SOLL_HABEN.SOLL);
         sega.setgKto(accountTransaction.getCreditAccount());
         return sega;
     }
 
-    private SegaDto createSecondTransaction(BananaTransactionDto accountTransaction) {
-        SegaDto sega = createDefaultSegaDto(accountTransaction);
+    private SegaDto createSecondTransaction(final BananaTransactionDto accountTransaction) {
+        final SegaDto sega = createDefaultSegaDto(accountTransaction);
         sega.setKto(accountTransaction.getCreditAccount());
         sega.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
         sega.setgKto(accountTransaction.getDebitAccount());
@@ -37,10 +36,9 @@ abstract public class AbstractSegaThreeRecordConverter extends AbstractSegaConve
         return sega;
     }
 
-    private SegaDto createThirdTransaction(BananaTransactionDto accountTransaction) {
-        SegaDto sega = createDefaultSegaDto(accountTransaction);
+    private SegaDto createThirdTransaction(final BananaTransactionDto accountTransaction) {
+        final SegaDto sega = createDefaultSegaDto(accountTransaction);
         sega.setKto(accountTransaction.getVatAccount());
-        sega.setgKto(accountTransaction.getDebitAccount());
         sega.setbType(2);
         sega.setNetto(accountTransaction.getAmountVat().abs());
         sega.setSteuer(accountTransaction.getAmountWithoutVat());
@@ -49,14 +47,14 @@ abstract public class AbstractSegaThreeRecordConverter extends AbstractSegaConve
     }
 
     @Override
-    final protected SegaDto createDefaultSegaDto(BananaTransactionDto transaction) {
-         final SegaDto  sega = super.createDefaultSegaDto(transaction);
-         sega.setmType(1);
-         sega.setTx2("");
-         return sega;
+    protected final SegaDto createDefaultSegaDto(final BananaTransactionDto transaction) {
+        final SegaDto sega = super.createDefaultSegaDto(transaction);
+        sega.setmType(1);
+        sega.setTx2("");
+        return sega;
     }
 
-    final protected SegaDto makeAsVatTransaction(SegaDto sega, BananaTransactionDto accountTransaction) {
+    protected final SegaDto makeAsVatTransaction(final SegaDto sega, final BananaTransactionDto accountTransaction) {
         sega.setsId(accountTransaction.getVatCode());
         sega.setsIdx(3);
         sega.setNetto(accountTransaction.getAmountWithoutVat());
