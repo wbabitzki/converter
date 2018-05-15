@@ -1,21 +1,29 @@
 package ch.wba.accounting.converters;
 
-import org.junit.Test;
+import static ch.wba.accounting.converters.BigDecimalConverter.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 
 import java.math.BigDecimal;
 
-import static ch.wba.accounting.converters.BigDecimalConverter.asString;
-import static ch.wba.accounting.converters.BigDecimalConverter.toAmount;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.Test;
 
 public class BigDecimalConverterTest {
-
     @Test
     public void toAmount_numberAsString_converts() {
         assertThat(toAmount("200.02"), is(new BigDecimal("200.02")));
         assertThat(toAmount("200"), is(new BigDecimal("200.00")));
         assertThat(toAmount("2'000.55"), is(new BigDecimal("2000.55")));
+    }
+
+    @Test
+    public void toPct_numberAsString_converts() {
+        assertThat(toPct("200.02"), is(new BigDecimal("200.0")));
+        assertThat(toPct("200"), is(new BigDecimal("200.0")));
+        assertThat(toPct("2'000.55"), is(new BigDecimal("2000.6")));
+        assertThat(toPct("8"), is(new BigDecimal("8.0")));
+        assertThat(toPct("8.0"), is(new BigDecimal("8.0")));
+        assertThat(toPct("7.7"), is(new BigDecimal("7.7")));
     }
 
     @Test
@@ -26,5 +34,4 @@ public class BigDecimalConverterTest {
         assertThat(asString(new BigDecimal("0.5")), is("0.50"));
         assertThat(asString(new BigDecimal("700.175")), is("700.18"));
     }
-
 }

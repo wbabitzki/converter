@@ -37,7 +37,7 @@ public class SegaIncomeWithVatConverterTest {
         input.setCreditAccount(TEST_CREDIT_ACCOUNT);
         input.setAmount(BigDecimalConverter.toAmount("15000"));
         input.setVatCode("USt80");
-        input.setVatPct(BigDecimalConverter.toAmount("0.08"));
+        input.setVatPct(BigDecimalConverter.toPct("8.0"));
         input.setAmountWithoutVat(BigDecimalConverter.toAmount("13888.89"));
         input.setAmountVat(BigDecimalConverter.toAmount("-1111.11"));
         input.setVatAccount(TEST_VAT_ACCOUNT);
@@ -88,6 +88,6 @@ public class SegaIncomeWithVatConverterTest {
         assertThat(result.get(2).getSteuer(), is(new BigDecimal("13888.89")));
         assertThat(result.get(2).getFwBetrag(), is(BigDecimal.ZERO));
         assertThat(result.get(2).getTx1(), is("Test Description"));
-        assertThat(result.get(2).getTx2(), is("0.08%"));
+        assertThat(result.get(2).getTx2(), is("8.0%"));
     }
 }

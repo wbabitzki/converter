@@ -1,35 +1,40 @@
 package ch.wba.accounting.banana;
 
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
-import com.opencsv.CSVReader;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
+
+import com.opencsv.CSVReader;
 
 public class BananaTransactionReader {
     protected static final String ROUNDED_VAT_CODE = "M77-2";
     private static final int EXPORT_FIELD_NUMBER = 17;
 
     private enum Fields {
-        DATE(0), //
-        DOCUMENT(1), //
-        DESCRIPTION(2), //
-        DEBIT_ACCOUNT(3), //
-        CREDIT_ACCOUNT(4), //
-        TRANSACTION_AMOUNT(5), //
-        VAT_CODE(6), //
-        VAT_PCT(8), //
-        AMOUNT_WITHOUT_VAT(10), //
-        AMOUNT_VAT(11), //
-        VAT_ACCOUNT(12);
+            DATE(0), //
+            DOCUMENT(1), //
+            DESCRIPTION(2), //
+            DEBIT_ACCOUNT(3), //
+            CREDIT_ACCOUNT(4), //
+            TRANSACTION_AMOUNT(5), //
+            VAT_CODE(6), //
+            VAT_PCT(8), //
+            AMOUNT_WITHOUT_VAT(10), //
+            AMOUNT_VAT(11), //
+            VAT_ACCOUNT(12);
         private final int index;
 
         Fields(final int index) {
@@ -60,13 +65,13 @@ public class BananaTransactionReader {
     // Creates a map with the document identifier as keys and transactions as values
     // The transactions with the same document are added to the first transaction into the composedTransaction list
     protected static final Collector<BananaTransactionDto, ?, LinkedHashMap<String, BananaTransactionDto>> COMPOSED_TRANSACTION_COLLECTOR = //
-            Collectors.toMap(BananaTransactionDto::getDocument, // key
-                    t -> t, // value
-                    (main, additional) -> {
-                        main.addComposedTransaction(additional);
-                        return main;
-                    }, // merge function for the transaction with the same document identifier
-                    LinkedHashMap::new);
+        Collectors.toMap(BananaTransactionDto::getDocument, // key
+            t -> t, // value
+            (main, additional) -> {
+                main.addComposedTransaction(additional);
+                return main;
+            }, // merge function for the transaction with the same document identifier
+            LinkedHashMap::new);
 
     private static BananaTransactionDto createTransaction(final String[] fields) {
         final BananaTransactionDto transaction = new BananaTransactionDto();
@@ -82,7 +87,7 @@ public class BananaTransactionReader {
         }
         final String vatPct = fields[Fields.VAT_PCT.getIndex()];
         if (StringUtils.isNotEmpty(vatPct)) {
-            transaction.setVatPct(BigDecimalConverter.toAmount(vatPct));
+            transaction.setVatPct(BigDecimalConverter.toPct(vatPct));
         }
         final String amountWithoutVat = fields[Fields.AMOUNT_WITHOUT_VAT.getIndex()];
         if (StringUtils.isNotEmpty(amountWithoutVat)) {
@@ -104,24 +109,23 @@ public class BananaTransactionReader {
         final List<BananaTransactionDto> initialTransactions = mapFromString(lines);
         final List<BananaTransactionDto> adjustedTransactions = adjustRoundedVats(initialTransactions);
         return new ArrayList<>(adjustedTransactions.stream() //
-                .collect(COMPOSED_TRANSACTION_COLLECTOR) //
-                .values());
+            .collect(COMPOSED_TRANSACTION_COLLECTOR) //
+            .values());
     }
 
     private List<BananaTransactionDto> mapFromString(final List<String> lines) {
         return lines.stream() //
-                    .map(STRING_TO_DTO_MAPPER) //
-                    .filter(Objects::nonNull) //
-                    .collect(Collectors.toList());
+            .map(STRING_TO_DTO_MAPPER) //
+            .filter(Objects::nonNull) //
+            .collect(Collectors.toList());
     }
 
     protected List<BananaTransactionDto> adjustRoundedVats(final List<BananaTransactionDto> transactions) {
         final ArrayList<BananaTransactionDto> roundedVatTransactions = new ArrayList<>();
         for (int i = 0; i < transactions.size(); i++) {
             if (ROUNDED_VAT_CODE.equals(transactions.get(i).getVatCode())) {
-                BananaTransactionDto roundedTransaction = transactions.get(i);
-
-                final BananaTransactionDto mainTransaction = transactions.get(i-1);
+                final BananaTransactionDto roundedTransaction = transactions.get(i);
+                final BananaTransactionDto mainTransaction = transactions.get(i - 1);
                 if (!mainTransaction.getDocument().equals(roundedTransaction.getDocument())) {
                     throw new IllegalArgumentException("The rounded transaction must belong to the same document as the rounded");
                 }
@@ -130,9 +134,8 @@ public class BananaTransactionReader {
                 mainTransaction.setAmountWithoutVat(mainTransaction.getAmountWithoutVat().subtract(roundedTransaction.getAmountVat()));
             }
         }
-
         return transactions.stream() //
-                .filter(t -> !roundedVatTransactions.contains(t)) //
-                .collect(Collectors.toList());
+            .filter(t -> !roundedVatTransactions.contains(t)) //
+            .collect(Collectors.toList());
     }
 }

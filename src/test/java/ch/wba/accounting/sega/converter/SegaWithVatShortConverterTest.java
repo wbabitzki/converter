@@ -30,7 +30,7 @@ public class SegaWithVatShortConverterTest {
         input.setDescription("Digital Ocean, div. Mat. USD");
         input.setDebitAccount("6210");
         input.setCreditAccount("1020");
-        input.setVatPct(BigDecimalConverter.toAmount("0.08"));
+        input.setVatPct(BigDecimalConverter.toPct("8.0"));
         input.setAmountWithoutVat(BigDecimalConverter.toAmount("83.35"));
         input.setAmountVat(BigDecimalConverter.toAmount("6.65"));
         input.setVatCode("VSB80");
@@ -40,6 +40,6 @@ public class SegaWithVatShortConverterTest {
         //assert
         assertThat(result, hasSize(2));
         assertThat(result.get(0).toString(), is("11,20.1.2015,6210,S, ,1020,VSB80,0,0,0,2,\"\",83.35,6.65,0.00,\"Digital Ocean, div. Mat. USD\",\"\",0,,0"));
-        assertThat(result.get(1).toString(), is("11,20.1.2015,1771,S, ,1020,,0,0,2,2,\"\",6.65,83.35,0.00,\"Digital Ocean, div. Mat. USD\",\"0.08%\",0,,0"));
+        assertThat(result.get(1).toString(), is("11,20.1.2015,1771,S, ,1020,,0,0,2,2,\"\",6.65,83.35,0.00,\"Digital Ocean, div. Mat. USD\",\"8.0%\",0,,0"));
     }
 }
