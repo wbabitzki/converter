@@ -13,7 +13,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 public class AppConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList( //
+        return new HashSet<>(Arrays.asList( //
             BananaResource.class, //
             MultiPartFeature.class));
     }

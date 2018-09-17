@@ -10,12 +10,14 @@
     <modules>
         <module>b2s-be</module>
         <module>b2s-rest</module>
+        <module>b2s-rest-systest</module>
     </modules>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <javaee.verion>8.0</javaee.verion>
+        <jersey2.version>2.27</jersey2.version>
     </properties>
     <build>
         <plugins>
@@ -76,12 +78,12 @@
             <dependency>
                 <groupId>org.glassfish.jersey.media</groupId>
                 <artifactId>jersey-media-multipart</artifactId>
-                <version>2.27</version>
+                <version>${jersey2.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-jetty-servlet</artifactId>
-                <version>2.21</version>
+                <version>${jersey2.version}</version>
             </dependency>
             
             <dependency>

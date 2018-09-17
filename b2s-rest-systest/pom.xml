@@ -6,26 +6,28 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>b2s-rest</artifactId>
-    <packaging>war</packaging>
-
-    <properties>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
-    </properties>
+    <artifactId>b2s-rest-systest</artifactId>
 
     <dependencies>
+        <!-- Jersey dependencies (JSON-B) for RS clients used in system tests -->
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-binding</artifactId>
+            <version>${jersey2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-jetty-servlet</artifactId>
         </dependency>
 
         <dependency>
@@ -33,18 +35,37 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
         </dependency>
 
         <dependency>
             <groupId>ch.wba</groupId>
             <artifactId>b2s-be</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>failsafe-integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -53,9 +74,6 @@
                         <image>
                             <name>b2s-rest/payara:${project.version}</name>
                             <alias>b2s-rest</alias>
-                            <build>
-                                <dockerFileDir>${project.basedir}</dockerFileDir>
-                            </build>
                             <run>
                                 <namingStrategy>alias</namingStrategy>
                                 <ports>
@@ -73,10 +91,18 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
+                        <id>start</id>
+                        <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>build</goal>
+                            <goal>stop</goal>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
                         </goals>
                     </execution>
                 </executions>
