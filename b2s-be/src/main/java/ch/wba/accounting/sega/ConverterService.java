@@ -1,49 +1,45 @@
 package ch.wba.accounting.sega;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.sega.converter.SegaComposedConverter;
-import ch.wba.accounting.sega.converter.SegaConverter;
 import ch.wba.accounting.sega.converter.SegaExpensesWithVatConverter;
 import ch.wba.accounting.sega.converter.SegaIncomeWithVatConverter;
 import ch.wba.accounting.sega.converter.SegaWithoutTaxConverter;
 
 public class ConverterService {
+    private final ConverterFactory converterFactory = new ConverterFactory();
 
-    public List<SegaDto> convert(List<BananaTransactionDto> bananaTransaction) {
-        ConverterFactory converterFactory = new ConverterFactory();
+    public ConverterService() {
         converterFactory.register(ConverterService::isExpensesWithVat, new SegaExpensesWithVatConverter());
         converterFactory.register(ConverterService::isIncomeWithVat, new SegaIncomeWithVatConverter());
         converterFactory.register(ConverterService::isWithoutVat, new SegaWithoutTaxConverter());
         converterFactory.register(ConverterService::isComposed, new SegaComposedConverter());
-
-        List<SegaDto> segaDtos = new ArrayList<>();
-        for (BananaTransactionDto transaction : bananaTransaction) {
-            SegaConverter converter = converterFactory.create(transaction);
-            segaDtos.addAll(converter.toSegaTransactions(transaction));
-        }
-
-        return segaDtos;
     }
 
-    protected static boolean isExpensesWithVat(BananaTransactionDto transaction) {
-        return !isWithoutVat(transaction) && !isComposed(transaction)
-                && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0;
+    public List<SegaDto> convert(final List<BananaTransactionDto> bananaTransaction) {
+        return bananaTransaction.stream() //
+            .map(t -> converterFactory.create(t).toSegaTransactions(t)) //
+            .flatMap(List::stream) //
+            .collect(Collectors.toList());
     }
 
-    protected static boolean isIncomeWithVat(BananaTransactionDto transaction) {
-        return !isWithoutVat(transaction) && !isComposed(transaction)
-                && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0;
+    protected static boolean isExpensesWithVat(final BananaTransactionDto transaction) {
+        return !isWithoutVat(transaction) && !isComposed(transaction) && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) < 0;
     }
 
-    protected static boolean isWithoutVat(BananaTransactionDto transaction) {
+    protected static boolean isIncomeWithVat(final BananaTransactionDto transaction) {
+        return !isWithoutVat(transaction) && !isComposed(transaction) && BigDecimal.ZERO.compareTo(transaction.getAmountVat()) > 0;
+    }
+
+    protected static boolean isWithoutVat(final BananaTransactionDto transaction) {
         return !isComposed(transaction) && transaction.getAmountVat() == null;
     }
 
-    protected static boolean isComposed(BananaTransactionDto transaction) {
+    protected static boolean isComposed(final BananaTransactionDto transaction) {
         return transaction.isComposedTransaction();
     }
 }
