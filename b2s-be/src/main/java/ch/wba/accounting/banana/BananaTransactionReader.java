@@ -20,7 +20,8 @@ import ch.wba.accounting.converters.LocalDateConverter;
 import com.opencsv.CSVReader;
 
 public class BananaTransactionReader {
-    protected static final String ROUNDED_VAT_CODE = "M77-2";
+    protected static final String VAT_ROUNDED_CODE = "M77-2";
+    protected static final String VAT_UST_77_CODE = "USt77";
     private static final int EXPORT_FIELD_NUMBER = 17;
 
     private enum Fields {
@@ -107,7 +108,7 @@ public class BananaTransactionReader {
         Validate.notEmpty(lines, "The imported list ist empty");
         //
         final List<BananaTransactionDto> initialTransactions = mapFromString(lines);
-        final List<BananaTransactionDto> adjustedTransactions = adjustRoundedVats(initialTransactions);
+        final List<BananaTransactionDto> adjustedTransactions = adjustTransactions(initialTransactions);
         return new ArrayList<>(adjustedTransactions.stream() //
             .collect(COMPOSED_TRANSACTION_COLLECTOR) //
             .values());
@@ -120,18 +121,20 @@ public class BananaTransactionReader {
             .collect(Collectors.toList());
     }
 
-    protected List<BananaTransactionDto> adjustRoundedVats(final List<BananaTransactionDto> transactions) {
+    protected List<BananaTransactionDto> adjustTransactions(final List<BananaTransactionDto> transactions) {
         final ArrayList<BananaTransactionDto> roundedVatTransactions = new ArrayList<>();
         for (int i = 0; i < transactions.size(); i++) {
-            if (ROUNDED_VAT_CODE.equals(transactions.get(i).getVatCode())) {
+            if (VAT_ROUNDED_CODE.equals(transactions.get(i).getVatCode())) {
                 final BananaTransactionDto roundedTransaction = transactions.get(i);
                 final BananaTransactionDto mainTransaction = transactions.get(i - 1);
                 if (!mainTransaction.getDocument().equals(roundedTransaction.getDocument())) {
-                    throw new IllegalArgumentException("The rounded transaction must belong to the same document as the rounded");
+                    throw new IllegalArgumentException("The main transaction must belong to the same document as the rounded");
                 }
                 roundedVatTransactions.add(roundedTransaction);
                 mainTransaction.setAmountVat(mainTransaction.getAmountVat().add(roundedTransaction.getAmountVat()));
                 mainTransaction.setAmountWithoutVat(mainTransaction.getAmountWithoutVat().subtract(roundedTransaction.getAmountVat()));
+            } else if (VAT_UST_77_CODE.equalsIgnoreCase(transactions.get(i).getVatCode())) {
+                transactions.get(i).setVatCode(VAT_UST_77_CODE);
             }
         }
         return transactions.stream() //
