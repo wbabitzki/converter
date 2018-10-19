@@ -125,21 +125,21 @@ public class BananaTransactionReaderTest {
         //arrange
         final BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
         final BananaTransactionDto roundedTransaction = createBananaDto("2", "Rounded transaction");
-        roundedTransaction.setVatCode(BananaTransactionReader.VAT_ROUNDED_CODE);
+        roundedTransaction.setVatCode(BananaTransactionReader.VAT_UP_ROUNDED_CODE);
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         //act
         testee.adjustTransactions(transactions);
     }
 
     @Test
-    public void adjustTransactions_roundedVatWithMainTransaction_adjustedToRoundedAmount() {
+    public void adjustTransactions_upRroundedVatWithMainTransaction_adjustedToRoundedAmount() {
         //arrange
         final BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
         firstTransaction.setAmount(BigDecimalConverter.toAmount("83.85"));
         firstTransaction.setAmountVat(BigDecimalConverter.toAmount("5.99"));
         firstTransaction.setAmountWithoutVat(BigDecimalConverter.toAmount("77.86"));
         final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
-        roundedTransaction.setVatCode(BananaTransactionReader.VAT_ROUNDED_CODE);
+        roundedTransaction.setVatCode(BananaTransactionReader.VAT_UP_ROUNDED_CODE);
         roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("0.01"));
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         //act
@@ -149,6 +149,26 @@ public class BananaTransactionReaderTest {
         assertThat(result.get(0).getAmount(), is(BigDecimalConverter.toAmount("83.85")));
         assertThat(result.get(0).getAmountWithoutVat(), is(BigDecimalConverter.toAmount("77.85")));
         assertThat(result.get(0).getAmountVat(), is(BigDecimalConverter.toAmount("6.00")));
+    }
+
+    @Test
+    public void adjustTransactions_offRoundedVatWithMainTransaction_adjustedToRoundedAmount() {
+        //arrange
+        final BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
+        firstTransaction.setAmount(BigDecimalConverter.toAmount("220.75"));
+        firstTransaction.setAmountVat(BigDecimalConverter.toAmount("15.78"));
+        firstTransaction.setAmountWithoutVat(BigDecimalConverter.toAmount("204.97"));
+        final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
+        roundedTransaction.setVatCode(BananaTransactionReader.VAT_OFF_ROUNDED_CODE);
+        roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("-0.01"));
+        final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
+        //act
+        final List<BananaTransactionDto> result = testee.adjustTransactions(transactions);
+        //assert
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0).getAmount(), is(BigDecimalConverter.toAmount("220.75")));
+        assertThat(result.get(0).getAmountWithoutVat(), is(BigDecimalConverter.toAmount("204.98")));
+        assertThat(result.get(0).getAmountVat(), is(BigDecimalConverter.toAmount("15.77")));
     }
 
     @Test
