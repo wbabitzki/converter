@@ -4,9 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -76,31 +80,47 @@ public class BananaTransactionReader {
             LinkedHashMap::new);
 
     private static BananaTransactionDto createTransaction(final String[] fields) {
+        final Map<Fields, Consumer<BananaTransactionDto>> fieldRules = createFieldRules(fields);
         final BananaTransactionDto transaction = new BananaTransactionDto();
-        transaction.setDate(LocalDateConverter.toDate(fields[Fields.DATE.getIndex()]));
-        transaction.setDocument(fields[Fields.DOCUMENT.getIndex()]);
-        transaction.setDescription(fields[Fields.DESCRIPTION.getIndex()]);
-        transaction.setDebitAccount(fields[Fields.DEBIT_ACCOUNT.getIndex()]);
-        transaction.setCreditAccount(fields[Fields.CREDIT_ACCOUNT.getIndex()]);
-        transaction.setAmount(BigDecimalConverter.toAmount(fields[Fields.TRANSACTION_AMOUNT.getIndex()]));
-        final String vatCode = fields[Fields.VAT_CODE.getIndex()];
-        if (StringUtils.isNotEmpty(vatCode)) {
-            transaction.setVatCode(vatCode);
-        }
-        final String vatPct = fields[Fields.VAT_PCT.getIndex()];
-        if (StringUtils.isNotEmpty(vatPct)) {
-            transaction.setVatPct(BigDecimalConverter.toPct(vatPct));
-        }
-        final String amountWithoutVat = fields[Fields.AMOUNT_WITHOUT_VAT.getIndex()];
-        if (StringUtils.isNotEmpty(amountWithoutVat)) {
-            transaction.setAmountWithoutVat(BigDecimalConverter.toAmount(amountWithoutVat));
-        }
-        final String amountVat = fields[Fields.AMOUNT_VAT.getIndex()];
-        if (StringUtils.isNotEmpty(amountVat)) {
-            transaction.setAmountVat(BigDecimalConverter.toAmount(amountVat));
-        }
-        transaction.setVatAccount(fields[Fields.VAT_ACCOUNT.getIndex()]);
+        Arrays.stream(Fields.values()) //
+            .forEach(field -> fieldRules.get(field).accept(transaction));
         return transaction;
+    }
+
+    private static Map<Fields, Consumer<BananaTransactionDto>> createFieldRules(final String[] fields) {
+        final Map<Fields, Consumer<BananaTransactionDto>> fieldRules = new EnumMap<>(Fields.class);
+        fieldRules.put(Fields.DATE, dto -> dto.setDate(LocalDateConverter.toDate(fields[Fields.DATE.getIndex()])));
+        fieldRules.put(Fields.DOCUMENT, dto -> dto.setDocument(fields[Fields.DOCUMENT.getIndex()]));
+        fieldRules.put(Fields.DESCRIPTION, dto -> dto.setDescription(fields[Fields.DESCRIPTION.getIndex()]));
+        fieldRules.put(Fields.DEBIT_ACCOUNT, dto -> dto.setDebitAccount(fields[Fields.DEBIT_ACCOUNT.getIndex()]));
+        fieldRules.put(Fields.CREDIT_ACCOUNT, dto -> dto.setCreditAccount(fields[Fields.CREDIT_ACCOUNT.getIndex()]));
+        fieldRules.put(Fields.TRANSACTION_AMOUNT, dto -> dto.setAmount(BigDecimalConverter.toAmount(fields[Fields.TRANSACTION_AMOUNT.getIndex()])));
+        fieldRules.put(Fields.VAT_CODE, dto -> {
+            final String vatCode = fields[Fields.VAT_CODE.getIndex()];
+            if (StringUtils.isNotEmpty(vatCode)) {
+                dto.setVatCode(vatCode);
+            }
+        });
+        fieldRules.put(Fields.VAT_PCT, dto -> {
+            final String vatPct = fields[Fields.VAT_PCT.getIndex()];
+            if (StringUtils.isNotEmpty(vatPct)) {
+                dto.setVatPct(BigDecimalConverter.toPct(vatPct));
+            }
+        });
+        fieldRules.put(Fields.AMOUNT_WITHOUT_VAT, dto -> {
+            final String amountWithoutVat = fields[Fields.AMOUNT_WITHOUT_VAT.getIndex()];
+            if (StringUtils.isNotEmpty(amountWithoutVat)) {
+                dto.setAmountWithoutVat(BigDecimalConverter.toAmount(amountWithoutVat));
+            }
+        });
+        fieldRules.put(Fields.AMOUNT_VAT, dto -> {
+            final String amountVat = fields[Fields.AMOUNT_VAT.getIndex()];
+            if (StringUtils.isNotEmpty(amountVat)) {
+                dto.setAmountVat(BigDecimalConverter.toAmount(amountVat));
+            }
+        });
+        fieldRules.put(Fields.VAT_ACCOUNT, dto -> dto.setVatAccount(fields[Fields.VAT_ACCOUNT.getIndex()]));
+        return fieldRules;
     }
 
     public List<BananaTransactionDto> readTransactions(final BufferedReader buffer) {
