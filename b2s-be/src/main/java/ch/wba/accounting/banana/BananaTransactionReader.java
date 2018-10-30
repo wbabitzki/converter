@@ -24,10 +24,8 @@ import ch.wba.accounting.converters.LocalDateConverter;
 import com.opencsv.CSVReader;
 
 public class BananaTransactionReader {
-    protected static final String VAT_UP_ROUNDED_CODE = "M77-2";
-    protected static final String VAT_OFF_ROUNDED_CODE = "-M77-2";
-    protected static final String VAT_UST_77_CODE = "USt77";
     private static final int EXPORT_FIELD_NUMBER = 17;
+    private final BananaTransactionPostProcesser bananaTransactionPostProcessor = new BananaTransactionPostProcesser();
 
     private enum Fields {
             DATE(0), //
@@ -129,7 +127,7 @@ public class BananaTransactionReader {
         Validate.notEmpty(lines, "The imported list ist empty");
         //
         final List<BananaTransactionDto> initialTransactions = mapFromString(lines);
-        final List<BananaTransactionDto> adjustedTransactions = adjustTransactions(initialTransactions);
+        final List<BananaTransactionDto> adjustedTransactions = bananaTransactionPostProcessor.adjustTransactions(initialTransactions);
         return new ArrayList<>(adjustedTransactions.stream() //
             .collect(COMPOSED_TRANSACTION_COLLECTOR) //
             .values());
@@ -139,28 +137,6 @@ public class BananaTransactionReader {
         return lines.stream() //
             .map(STRING_TO_DTO_MAPPER) //
             .filter(Objects::nonNull) //
-            .collect(Collectors.toList());
-    }
-
-    protected List<BananaTransactionDto> adjustTransactions(final List<BananaTransactionDto> transactions) {
-        final ArrayList<BananaTransactionDto> roundedVatTransactions = new ArrayList<>();
-        for (int i = 0; i < transactions.size(); i++) {
-            final String vatCode = transactions.get(i).getVatCode();
-            if (VAT_UP_ROUNDED_CODE.equals(vatCode) || VAT_OFF_ROUNDED_CODE.equals(vatCode)) {
-                final BananaTransactionDto roundedTransaction = transactions.get(i);
-                final BananaTransactionDto mainTransaction = transactions.get(i - 1);
-                if (!mainTransaction.getDocument().equals(roundedTransaction.getDocument())) {
-                    throw new IllegalArgumentException("The main transaction must belong to the same document as the rounded");
-                }
-                roundedVatTransactions.add(roundedTransaction);
-                mainTransaction.setAmountVat(mainTransaction.getAmountVat().add(roundedTransaction.getAmountVat()));
-                mainTransaction.setAmountWithoutVat(mainTransaction.getAmountWithoutVat().subtract(roundedTransaction.getAmountVat()));
-            } else if (VAT_UST_77_CODE.equalsIgnoreCase(vatCode)) {
-                transactions.get(i).setVatCode(VAT_UST_77_CODE);
-            }
-        }
-        return transactions.stream() //
-            .filter(t -> !roundedVatTransactions.contains(t)) //
             .collect(Collectors.toList());
     }
 }
