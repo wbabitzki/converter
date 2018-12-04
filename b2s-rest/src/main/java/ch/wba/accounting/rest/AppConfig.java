@@ -14,6 +14,7 @@ public class AppConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return new HashSet<>(Arrays.asList( //
+            CorsFilter.class, //
             BananaResource.class, //
             MultiPartFeature.class));
     }
