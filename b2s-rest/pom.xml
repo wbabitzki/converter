@@ -60,6 +60,7 @@
                                 <namingStrategy>alias</namingStrategy>
                                 <ports>
                                     <port>8080:8080</port>
+                                    <port>5005:5005</port>
                                 </ports>
                                 <wait>
                                     <http>
