@@ -18,18 +18,28 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionReader;
+import ch.wba.accounting.sega.ConverterService;
+import ch.wba.accounting.sega.SegaDto;
 
 @Stateless
 @Path("banana")
 public class BananaResource {
+    private static final String PATH_READ_FILE = "readFile";
+    private static final String PATH_CONVERT = "convert";
     private BananaTransactionReader bananaReader;
+    private ConverterService converterService;
 
     @Inject
     public void setBananaReader(final BananaTransactionReader bananaReader) {
         this.bananaReader = bananaReader;
     }
 
-    @Path("/readFile")
+    @Inject
+    public void setConverterService(final ConverterService converterService) {
+        this.converterService = converterService;
+    }
+
+    @Path(PATH_READ_FILE)
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
@@ -39,5 +49,13 @@ public class BananaResource {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Path(PATH_CONVERT)
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<SegaDto> convert(final List<BananaTransactionDto> bananaTransations) {
+        return converterService.convert(bananaTransations);
     }
 }

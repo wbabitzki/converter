@@ -4,7 +4,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.*;
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -22,10 +25,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.banana.BananaTransactionReader;
+import ch.wba.accounting.sega.SegaDto;
 
 public class BananaResourceIT {
-    private WebTarget tut;
     static final String SERVICE_URI = "http://localhost:8080/b2s-rest/rest/banana/";
+    static final String PATH_READ_FILE = "readFile";
+    static final String PATH_CONVERT = "convert";
+    private WebTarget tut;
 
     @Before
     public void init() {
@@ -36,24 +43,50 @@ public class BananaResourceIT {
     public void readFile_csvFile_readsAllRecords() throws Exception {
         // arrange
         final File file = new File(getClass().getClassLoader().getResource("test-banana.csv").getFile());
-        Response response = null;
         final FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file", file);
+        Response response = null;
         // act
         try (final FormDataMultiPart formDataMultiPart = new FormDataMultiPart()) {
             final MultiPart multiPart = formDataMultiPart.bodyPart(fileDataBodyPart);
             response = this.tut //
-                .path("readFile") //
+                .path(PATH_READ_FILE) //
                 .request(MediaType.APPLICATION_JSON) //
                 .post(Entity.entity(multiPart, multiPart.getMediaType()));
         }
         // assert
         assertThat(response.getStatus(), is(200));
-        final List<BananaTransactionDto> result = response.readEntity(jsonConverter());
+        final List<BananaTransactionDto> result = response.readEntity(jsonBananaDtoConverter());
         assertThat(result, hasSize(11));
     }
 
-    private GenericType<List<BananaTransactionDto>> jsonConverter() {
+    @Test
+    public void convert_listBananaDto_createListSegaDto() throws Exception {
+        //arrange
+        List<BananaTransactionDto> bananaTransaction = null;
+        final File file = new File(getClass().getClassLoader().getResource("test-banana.csv").getFile());
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+            bananaTransaction = new BananaTransactionReader().readTransactions(reader);
+        }
+        Response response = null;
+        //act
+        response = this.tut //
+            .path(PATH_CONVERT) //
+            .request(MediaType.APPLICATION_JSON) //
+            .post(Entity.json(bananaTransaction));
+        //assert
+        assertThat(response.getStatus(), is(200));
+        final List<SegaDto> result = response.readEntity(jsonSegaDtoConverter());
+        assertThat(result, hasSize(26));
+    }
+
+    private GenericType<List<BananaTransactionDto>> jsonBananaDtoConverter() {
         return new GenericType<List<BananaTransactionDto>>() {
+            // Empty
+        };
+    }
+
+    private GenericType<List<SegaDto>> jsonSegaDtoConverter() {
+        return new GenericType<List<SegaDto>>() {
             // Empty
         };
     }
