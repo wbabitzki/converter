@@ -1,12 +1,11 @@
 package ch.wba.accounting.sega;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.sega.converter.SegaConverter;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public class ConverterFactory {
 
@@ -17,12 +16,12 @@ public class ConverterFactory {
     }
 
     public SegaConverter create(final BananaTransactionDto transaction) {
-        final Optional<SegaConverter> converter = converters //
+        return converters //
                 .entrySet() //
                 .stream() //
                 .filter(e -> e.getKey().test(transaction)) //
                 .map(Map.Entry::getValue) //
-                .findFirst();
-        return converter.isPresent() ? converter.get() : null;
+                .findFirst() //
+                .orElse(null);
     }
 }
