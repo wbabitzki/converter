@@ -10,11 +10,12 @@ import ch.wba.accounting.converters.LocalDateConverter;
 public class SegaDto {
     protected static final String[] HEADERS = { "Blg", "Datum", "Kto", "S/H", "Grp", "GKto", "SId", "SIdx", "KIdx", "BTyp", "MTyp", "Code", //
         "Netto", "Steuer", "FW-Betrag", "Tx1", "Tx2", "PkKey", "OpId", "Flag" };
+    protected static final String DELIMITER = ",";
     private static final String QUOTE_SYMBOL = "\"";
-    private static final String DELIMITER = ",";
 
     public enum SOLL_HABEN {
-            SOLL("S"), HABEN("H");
+            SOLL("S"), //
+            HABEN("H");
         private final String code;
 
         SOLL_HABEN(final String code) {

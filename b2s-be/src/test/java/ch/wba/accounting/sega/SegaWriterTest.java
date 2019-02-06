@@ -44,7 +44,7 @@ public class SegaWriterTest {
         //act
         testee.write(writer, TEST_EMPTY_LIST);
         //assert
-        verify(writer).write(TEST_HEADER, 0, TEST_HEADER.length());
+        verify(writer).write(TEST_HEADER);
     }
 
     @Test
@@ -55,8 +55,8 @@ public class SegaWriterTest {
         //act
         testee.write(writer, list);
         //assert
-        verify(writer).write(TEST_HEADER, 0, TEST_HEADER.length());
-        verify(writer, times(3)).write(endsWith("\r\n"));
+        verify(writer).write(TEST_HEADER);
+        verify(writer, times(4)).write(endsWith("\r\n"));
     }
 
     private SegaDto createSegaDto() {

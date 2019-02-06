@@ -26,17 +26,34 @@ import org.junit.Test;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionReader;
+import ch.wba.accounting.sega.ConverterService;
 import ch.wba.accounting.sega.SegaDto;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class BananaResourceIT {
     static final String SERVICE_URI = "http://localhost:8080/b2s-rest/rest/banana/";
     static final String PATH_READ_FILE = "readFile";
     static final String PATH_CONVERT = "convert";
+    static final String PATH_TO_STRING_OUTPUT = "toStringOutput";
     private WebTarget tut;
+    private ObjectMapper objectMapper;
 
     @Before
     public void init() {
-        this.tut = ClientBuilder.newClient().register(MultiPartFeature.class).target(SERVICE_URI);
+        tut = ClientBuilder.newClient().register(MultiPartFeature.class).target(SERVICE_URI);
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+        objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
     }
 
     @Test
@@ -55,38 +72,57 @@ public class BananaResourceIT {
         }
         // assert
         assertThat(response.getStatus(), is(200));
-        final List<BananaTransactionDto> result = response.readEntity(jsonBananaDtoConverter());
+        final List<BananaTransactionDto> result = objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<BananaTransactionDto>>() {
+            // Empty
+        });
         assertThat(result, hasSize(11));
     }
 
     @Test
     public void convert_listBananaDto_createListSegaDto() throws Exception {
         //arrange
-        List<BananaTransactionDto> bananaTransaction = null;
+        List<BananaTransactionDto> bananaTransactions = null;
         final File file = new File(getClass().getClassLoader().getResource("test-banana.csv").getFile());
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
-            bananaTransaction = new BananaTransactionReader().readTransactions(reader);
+            bananaTransactions = new BananaTransactionReader().readTransactions(reader);
         }
         Response response = null;
         //act
         response = this.tut //
             .path(PATH_CONVERT) //
             .request(MediaType.APPLICATION_JSON) //
-            .post(Entity.json(bananaTransaction));
+            .post(Entity.json(bananaTransactions));
         //assert
         assertThat(response.getStatus(), is(200));
-        final List<SegaDto> result = response.readEntity(jsonSegaDtoConverter());
-        assertThat(result, hasSize(26));
-    }
-
-    private GenericType<List<BananaTransactionDto>> jsonBananaDtoConverter() {
-        return new GenericType<List<BananaTransactionDto>>() {
+        final List<SegaDto> result = objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<SegaDto>>() {
             // Empty
-        };
+        });
+        assertThat(result, hasSize(35));
     }
 
-    private GenericType<List<SegaDto>> jsonSegaDtoConverter() {
-        return new GenericType<List<SegaDto>>() {
+    @Test
+    public void toStringOutput_listSageDto_createCsvList() throws Exception {
+        //arrange
+        List<BananaTransactionDto> bananaTransactions = null;
+        final File file = new File(getClass().getClassLoader().getResource("test-banana.csv").getFile());
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+            bananaTransactions = new BananaTransactionReader().readTransactions(reader);
+        }
+        final List<SegaDto> sageTransactions = new ConverterService().convert(bananaTransactions);
+        Response response = null;
+        //act
+        response = this.tut //
+            .path(PATH_TO_STRING_OUTPUT) //
+            .request(MediaType.APPLICATION_JSON) //
+            .post(Entity.json(sageTransactions));
+        //assert
+        assertThat(response.getStatus(), is(200));
+        final List<String> result = response.readEntity(jsonStringConverter());
+        assertThat(result, hasSize(36));
+    }
+
+    private GenericType<List<String>> jsonStringConverter() {
+        return new GenericType<List<String>>() {
             // Empty
         };
     }

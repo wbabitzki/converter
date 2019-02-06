@@ -1,8 +1,16 @@
 package ch.wba.accounting.rest;
 
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.banana.BananaTransactionReader;
-import ch.wba.accounting.sega.ConverterService;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,14 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.banana.BananaTransactionReader;
+import ch.wba.accounting.sega.ConverterService;
+import ch.wba.accounting.sega.SegaDto;
+import ch.wba.accounting.sega.SegaWriter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BananaResourceTest {
@@ -30,6 +35,8 @@ public class BananaResourceTest {
     BananaTransactionReader bananaReader;
     @Mock
     ConverterService converterService;
+    @Mock
+    SegaWriter segaWriter;
 
     @Test
     @SuppressWarnings("unchecked")
@@ -60,5 +67,26 @@ public class BananaResourceTest {
         testee.convert(bananaTransactions);
         //assert
         verify(converterService).convert(bananaTransactions);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void toStringOutput_listSegaDto_createsListString() {
+        //arrange
+        final List<SegaDto> list = Arrays.asList(createSegaDto(), createSegaDto(), createSegaDto());
+        //act
+        testee.toStringOutput(list);
+        //assert
+        verify(segaWriter).toStringList(anyList());
+    }
+
+    private SegaDto createSegaDto() {
+        final SegaDto segaDto = new SegaDto();
+        segaDto.setDatum(LocalDate.now());
+        segaDto.setTransactionType(SegaDto.SOLL_HABEN.HABEN);
+        segaDto.setNetto(BigDecimal.ZERO);
+        segaDto.setSteuer(BigDecimal.ZERO);
+        segaDto.setFwBetrag(BigDecimal.ZERO);
+        return segaDto;
     }
 }

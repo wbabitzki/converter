@@ -7,6 +7,7 @@ import javax.enterprise.inject.Produces;
 
 import ch.wba.accounting.banana.BananaTransactionReader;
 import ch.wba.accounting.sega.ConverterService;
+import ch.wba.accounting.sega.SegaWriter;
 
 @SessionScoped
 public class BeanProducer implements Serializable {
@@ -20,5 +21,10 @@ public class BeanProducer implements Serializable {
     @Produces
     public ConverterService getConverterServicer() {
         return new ConverterService();
+    }
+
+    @Produces
+    public SegaWriter getSegaWriter() {
+        return new SegaWriter();
     }
 }

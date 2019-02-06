@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 @ApplicationPath("rest")
@@ -14,8 +15,10 @@ public class AppConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return new HashSet<>(Arrays.asList( //
+            JacksonFeature.class, //
             CorsFilter.class, //
             BananaResource.class, //
-            MultiPartFeature.class));
+            MultiPartFeature.class, //
+            JacksonObjectMapperProvider.class));
     }
 }

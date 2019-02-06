@@ -20,14 +20,17 @@ import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionReader;
 import ch.wba.accounting.sega.ConverterService;
 import ch.wba.accounting.sega.SegaDto;
+import ch.wba.accounting.sega.SegaWriter;
 
 @Stateless
 @Path("banana")
 public class BananaResource {
     private static final String PATH_READ_FILE = "readFile";
     private static final String PATH_CONVERT = "convert";
+    private static final String PATH_TO_STRING_OUTPUT = "toStringOutput";
     private BananaTransactionReader bananaReader;
     private ConverterService converterService;
+    private SegaWriter segaWriter;
 
     @Inject
     public void setBananaReader(final BananaTransactionReader bananaReader) {
@@ -37,6 +40,11 @@ public class BananaResource {
     @Inject
     public void setConverterService(final ConverterService converterService) {
         this.converterService = converterService;
+    }
+
+    @Inject
+    public void setSegaWriter(final SegaWriter segaWriter) {
+        this.segaWriter = segaWriter;
     }
 
     @Path(PATH_READ_FILE)
@@ -57,5 +65,13 @@ public class BananaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<SegaDto> convert(final List<BananaTransactionDto> bananaTransations) {
         return converterService.convert(bananaTransations);
+    }
+
+    @Path(PATH_TO_STRING_OUTPUT)
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> toStringOutput(final List<SegaDto> list) {
+        return segaWriter.toStringList(list);
     }
 }
