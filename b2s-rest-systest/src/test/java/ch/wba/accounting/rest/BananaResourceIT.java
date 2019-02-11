@@ -7,7 +7,10 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -31,10 +34,17 @@ import ch.wba.accounting.sega.SegaDto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class BananaResourceIT {
@@ -42,6 +52,7 @@ public class BananaResourceIT {
     static final String PATH_READ_FILE = "readFile";
     static final String PATH_CONVERT = "convert";
     static final String PATH_TO_STRING_OUTPUT = "toStringOutput";
+    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private WebTarget tut;
     private ObjectMapper objectMapper;
 
@@ -49,7 +60,20 @@ public class BananaResourceIT {
     public void init() {
         tut = ClientBuilder.newClient().register(MultiPartFeature.class).target(SERVICE_URI);
         objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        final JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDate.class, new JsonSerializer<LocalDate>() {
+            @Override
+            public void serialize(final LocalDate value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException, JsonProcessingException {
+                gen.writeString(value.format(FORMATTER));
+            }
+        });
+        javaTimeModule.addDeserializer(LocalDate.class, new JsonDeserializer<LocalDate>() {
+            @Override
+            public LocalDate deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+                return LocalDate.parse(p.getValueAsString(), FORMATTER);
+            }
+        });
+        objectMapper.registerModule(javaTimeModule);
         objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
         objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
