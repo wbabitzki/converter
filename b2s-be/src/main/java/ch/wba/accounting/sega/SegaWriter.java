@@ -1,15 +1,14 @@
 package ch.wba.accounting.sega;
 
+import com.opencsv.CSVWriter;
+import org.apache.commons.lang3.Validate;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.Validate;
-
-import com.opencsv.CSVWriter;
 
 public class SegaWriter {
     private static final String WINDOWS_LINE_END = "\r\n";
@@ -24,7 +23,7 @@ public class SegaWriter {
         }
     }
 
-    public List<String> toStringList(final List<SegaDto> list) {
+    private List<String> toStringList(final List<SegaDto> list) {
         final List<String> result = new ArrayList<>(Arrays.asList(String.join(SegaDto.DELIMITER, SegaDto.HEADERS) + WINDOWS_LINE_END));
         result.addAll( //
             list.stream().map(sega -> sega.toString() + WINDOWS_LINE_END) //
