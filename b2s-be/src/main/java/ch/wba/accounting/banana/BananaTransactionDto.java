@@ -5,29 +5,57 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import ch.wba.accounting.banana.validation.FromAccountConstraint;
+import ch.wba.accounting.banana.validation.ToAccountConstraint;
+import ch.wba.accounting.banana.validation.WithVatChecks;
+
+@FromAccountConstraint
+@ToAccountConstraint
 public class BananaTransactionDto {
+    private final UUID uuid;
+    @NotNull
     private LocalDate date;
+    @NotBlank
     private String document;
+    @NotBlank
     private String description;
     private String debitAccount;
     private String creditAccount;
+    @NotNull
     private BigDecimal amount;
+    @NotBlank(groups = WithVatChecks.class)
     private String vatCode;
+    @NotNull(groups = WithVatChecks.class)
     private BigDecimal vatPct;
+    @NotNull(groups = WithVatChecks.class)
     private BigDecimal amountWithoutVat;
+    @NotNull(groups = WithVatChecks.class)
     private BigDecimal amountVat;
+    @NotBlank(groups = WithVatChecks.class)
     private String vatAccount;
+    private final List<BananaTransactionDto> composedTransactions = new ArrayList<>();
+    private BananaTransactionDto mainTransaction;
 
-    private List<BananaTransactionDto> composedTransactions = new ArrayList<>();
+    public BananaTransactionDto() {
+        uuid = UUID.randomUUID();
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
 
     public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(final LocalDate date) {
         this.date = date;
     }
 
@@ -35,7 +63,7 @@ public class BananaTransactionDto {
         return document;
     }
 
-    public void setDocument(String document) {
+    public void setDocument(final String document) {
         this.document = document;
     }
 
@@ -43,7 +71,7 @@ public class BananaTransactionDto {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -51,7 +79,7 @@ public class BananaTransactionDto {
         return debitAccount;
     }
 
-    public void setDebitAccount(String debitAccount) {
+    public void setDebitAccount(final String debitAccount) {
         this.debitAccount = debitAccount;
     }
 
@@ -59,7 +87,7 @@ public class BananaTransactionDto {
         return creditAccount;
     }
 
-    public void setCreditAccount(String creditAccount) {
+    public void setCreditAccount(final String creditAccount) {
         this.creditAccount = creditAccount;
     }
 
@@ -67,7 +95,7 @@ public class BananaTransactionDto {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -75,7 +103,7 @@ public class BananaTransactionDto {
         return vatCode;
     }
 
-    public void setVatCode(String vatCode) {
+    public void setVatCode(final String vatCode) {
         this.vatCode = vatCode;
     }
 
@@ -83,7 +111,7 @@ public class BananaTransactionDto {
         return vatPct;
     }
 
-    public void setVatPct(BigDecimal vatPct) {
+    public void setVatPct(final BigDecimal vatPct) {
         this.vatPct = vatPct;
     }
 
@@ -91,7 +119,7 @@ public class BananaTransactionDto {
         return amountWithoutVat;
     }
 
-    public void setAmountWithoutVat(BigDecimal amountWithoutVat) {
+    public void setAmountWithoutVat(final BigDecimal amountWithoutVat) {
         this.amountWithoutVat = amountWithoutVat;
     }
 
@@ -99,7 +127,7 @@ public class BananaTransactionDto {
         return amountVat;
     }
 
-    public void setAmountVat(BigDecimal amountVat) {
+    public void setAmountVat(final BigDecimal amountVat) {
         this.amountVat = amountVat;
     }
 
@@ -107,7 +135,7 @@ public class BananaTransactionDto {
         return vatAccount;
     }
 
-    public void setVatAccount(String vatAccount) {
+    public void setVatAccount(final String vatAccount) {
         this.vatAccount = vatAccount;
     }
 
@@ -115,18 +143,25 @@ public class BananaTransactionDto {
         return Collections.unmodifiableList(composedTransactions);
     }
 
-    public void addComposedTransaction(BananaTransactionDto transaction) {
+    public void addComposedTransaction(final BananaTransactionDto transaction) {
+        transaction.mainTransaction = this;
         this.composedTransactions.add(transaction);
     }
 
     public boolean isComposedTransaction() {
         return !this.composedTransactions.isEmpty();
     }
+
+    public boolean isWithVat() {
+        return vatCode != null || vatPct != null || amountWithoutVat != null || amountVat != null;
+    }
+
+    public boolean isIntegrated() {
+        return mainTransaction != null;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append(document)
-                .append(description)
-                .toString();
+        return new ToStringBuilder(this).append(document).append(description).toString();
     }
 }
