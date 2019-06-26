@@ -41,7 +41,7 @@ public class BananaTransactionDto {
     @NotBlank(groups = WithVatChecks.class)
     private String vatAccount;
     private final List<BananaTransactionDto> composedTransactions = new ArrayList<>();
-    private BananaTransactionDto mainTransaction;
+    private boolean isIntegrateg;
 
     public BananaTransactionDto() {
         uuid = UUID.randomUUID();
@@ -144,7 +144,7 @@ public class BananaTransactionDto {
     }
 
     public void addComposedTransaction(final BananaTransactionDto transaction) {
-        transaction.mainTransaction = this;
+        transaction.isIntegrateg = true;
         this.composedTransactions.add(transaction);
     }
 
@@ -157,7 +157,7 @@ public class BananaTransactionDto {
     }
 
     public boolean isIntegrated() {
-        return mainTransaction != null;
+        return isIntegrateg;
     }
 
     @Override

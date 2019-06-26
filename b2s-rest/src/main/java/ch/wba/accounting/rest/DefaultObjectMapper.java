@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
 import ch.wba.accounting.sega.SegaDto;
@@ -25,6 +28,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class DefaultObjectMapper extends ObjectMapper {
     private static final long serialVersionUID = -7381800116218617750L;
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultObjectMapper.class);
     private static final String ZERO_FORMATTED = BigDecimalConverter.asString(BigDecimal.ZERO);
 
     protected DefaultObjectMapper() {
@@ -81,8 +85,8 @@ public class DefaultObjectMapper extends ObjectMapper {
                     try {
                         return LocalDateConverter.toDate(p.getValueAsString());
                     } catch (final DateTimeParseException e) {
-                        System.out.format("Invalid date: '%s'", p.getValueAsString());
-                        return null;
+                        LOG.error("Invalid date: '{}'", p.getValueAsString());
+                        throw e;
                     }
                 }
             });

@@ -112,7 +112,7 @@ public class BananaResourceIT {
         response = this.tut //
             .path(PATH_CONVERT) //
             .request(MediaType.APPLICATION_JSON) //
-            .post(Entity.json(bananaTransactions));
+            .post(Entity.json(objectMapper.writeValueAsString(bananaTransactions)));
         //assert
         assertThat(response.getStatus(), is(200));
         final List<SegaDto> result = objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<SegaDto>>() {
