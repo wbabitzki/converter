@@ -26,7 +26,7 @@ public class BananaValidator {
     protected Set<ConstraintViolation<BananaTransactionDto>> validate(final BananaTransactionDto input) {
         final Set<ConstraintViolation<BananaTransactionDto>> violations = validator.validate(input);
         if (input.isComposedTransaction()) {
-            final Set<ConstraintViolation<BananaTransactionDto>> integratedViolations = input.getComposedTransactions().stream() //
+            final Set<ConstraintViolation<BananaTransactionDto>> integratedViolations = input.getIntegratedTransactions().stream() //
                 .map(t -> validator.validate(t)) //
                 .flatMap(Set<ConstraintViolation<BananaTransactionDto>>::stream) //
                 .collect(Collectors.toSet());

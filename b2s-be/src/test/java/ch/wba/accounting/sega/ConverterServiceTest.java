@@ -75,7 +75,7 @@ public class ConverterServiceTest {
         //arrange
         BananaTransactionDto transaction = new BananaTransactionDto();
         //act
-        transaction.addComposedTransaction(new BananaTransactionDto());
+        transaction.addIntegratedTransaction(new BananaTransactionDto());
         //assert
         assertTrue(ConverterService.isComposed(transaction));
     }

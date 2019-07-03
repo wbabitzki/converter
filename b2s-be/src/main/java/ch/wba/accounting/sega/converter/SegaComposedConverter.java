@@ -14,7 +14,7 @@ public class SegaComposedConverter extends AbstractSegaConverter {
     public List<SegaDto> toSegaTransactions(BananaTransactionDto transaction) {
         final List<SegaDto> result = new ArrayList<>();
         result.add(createFirstCompoundRecord(transaction));
-        for (BananaTransactionDto bananaTransactionDto : transaction.getComposedTransactions()) {
+        for (BananaTransactionDto bananaTransactionDto : transaction.getIntegratedTransactions()) {
             if (bananaTransactionDto.getAmountVat() == null) {
                 result.addAll(converterWithoutVat.toSegaTransactions(bananaTransactionDto));
             } else {

@@ -23,15 +23,15 @@ public class BananaTransactionDto {
     @NotNull
     private LocalDate date;
     @NotBlank
-    private String document;
+    private String document = "";
     @NotBlank
-    private String description;
-    private String debitAccount;
-    private String creditAccount;
+    private String description = "";
+    private String debitAccount = "";
+    private String creditAccount = "";
     @NotNull
     private BigDecimal amount;
     @NotBlank(groups = WithVatChecks.class)
-    private String vatCode;
+    private String vatCode = "";
     @NotNull(groups = WithVatChecks.class)
     private BigDecimal vatPct;
     @NotNull(groups = WithVatChecks.class)
@@ -39,8 +39,8 @@ public class BananaTransactionDto {
     @NotNull(groups = WithVatChecks.class)
     private BigDecimal amountVat;
     @NotBlank(groups = WithVatChecks.class)
-    private String vatAccount;
-    private final List<BananaTransactionDto> composedTransactions = new ArrayList<>();
+    private String vatAccount = "";
+    private final List<BananaTransactionDto> integratedTransactions = new ArrayList<>();
     private boolean isIntegrateg;
 
     public BananaTransactionDto() {
@@ -139,17 +139,17 @@ public class BananaTransactionDto {
         this.vatAccount = vatAccount;
     }
 
-    public List<BananaTransactionDto> getComposedTransactions() {
-        return Collections.unmodifiableList(composedTransactions);
+    public List<BananaTransactionDto> getIntegratedTransactions() {
+        return Collections.unmodifiableList(integratedTransactions);
     }
 
-    public void addComposedTransaction(final BananaTransactionDto transaction) {
+    public void addIntegratedTransaction(final BananaTransactionDto transaction) {
         transaction.isIntegrateg = true;
-        this.composedTransactions.add(transaction);
+        this.integratedTransactions.add(transaction);
     }
 
     public boolean isComposedTransaction() {
-        return !this.composedTransactions.isEmpty();
+        return !this.integratedTransactions.isEmpty();
     }
 
     public boolean isWithVat() {

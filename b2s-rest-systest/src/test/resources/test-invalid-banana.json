@@ -1,0 +1,21 @@
+[
+    {
+        "uuid": "34844b03-d68d-45f6-93b4-b07701f7a016",
+        "date": "5.1.2018",
+        "document": "1",
+        "description": "Zahlungseingang Rechnung 103",
+        "debitAccount": "",
+        "creditAccount": "3000",
+        "amount": 15000.00,
+        "vatCode": "B80",
+        "vatPct": -8.0,
+        "amountWithoutVat": 13888.89,
+        "amountVat": -1111.11,
+        "vatAccount": "2201",
+        "integratedTransactions": [],
+        "isIntegrateg": false,
+        "composedTransaction": false,
+        "integrated": false,
+        "withVat": true
+    }
+]

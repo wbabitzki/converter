@@ -19,7 +19,17 @@ import org.junit.Test;
 import ch.wba.accounting.banana.BananaTransactionDto;
 
 public class BananaValidatorTest {
-    @SuppressWarnings("unchecked")
+    private static final String DATE = "date";
+    private static final String DOCUMENT = "document";
+    private static final String DESCRIPTION = "description";
+    private static final String FROM_ACCOUNT = "fromAccount";
+    private static final String TO_ACCOUNT = "toAccount";
+    private static final String AMOUNT = "amount";
+    private static final String VAT_PCT = "vatPct";
+    private static final String AMOUNT_WITHOUT_VAT = "amountWithoutVat";
+    private static final String AMOUNT_VAT = "amountVat";
+    private static final String VAT_ACCOUNT = "vatAccount";
+
     @Test
     public void validate_emtpyRequiredFields_createsViolations() {
         //arrange
@@ -28,83 +38,83 @@ public class BananaValidatorTest {
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result, Matchers.hasItems( //
-            hasViolation("date", testee.getUuid()), //
-            hasViolation("document", testee.getUuid()), //
-            hasViolation("description", testee.getUuid()), //
-            hasViolation("fromAccount", testee.getUuid()), //
-            hasViolation("toAccount", testee.getUuid()) //
-        ));
+        assertThat(result, Matchers.hasItem(hasViolation(DATE, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(DOCUMENT, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(DESCRIPTION, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(FROM_ACCOUNT, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(TO_ACCOUNT, testee.getUuid())));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void validate_emtpyRequiredFieldsInComposedTransation_createsViolations() {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
-        testee.addComposedTransaction(new BananaTransactionDto());
+        testee.addIntegratedTransaction(new BananaTransactionDto());
         //act
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result, Matchers.hasItems( //
-            hasViolation("date", testee.getUuid()), //
-            hasViolation("document", testee.getUuid()), //
-            hasViolation("description", testee.getUuid()), //
-            not(hasViolation("fromAccount", testee.getUuid())), //
-            hasViolation("toAccount", testee.getUuid()) //
-        ));
+        assertThat(result, Matchers.hasItem(hasViolation(DATE, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(DOCUMENT, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(DESCRIPTION, testee.getUuid())));
+        assertThat(result, not(Matchers.hasItem(hasViolation(FROM_ACCOUNT, testee.getUuid()))));
+        assertThat(result, Matchers.hasItem(hasViolation(TO_ACCOUNT, testee.getUuid())));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void validate_fromAccountInComposedTransation_createsViolations() {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
         testee.setDebitAccount("2000");
-        testee.addComposedTransaction(new BananaTransactionDto());
+        testee.addIntegratedTransaction(new BananaTransactionDto());
         //act
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result, Matchers.hasItems( //
-            hasViolation("fromAccount", testee.getUuid()) //
-        ));
+        assertThat(result, Matchers.hasItem(hasViolation(FROM_ACCOUNT, testee.getUuid())));
     }
 
-    @SuppressWarnings("unchecked")
+    @Test
+    public void validate_toAccountInComposedTransation_noViolations() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setCreditAccount("2000");
+        testee.addIntegratedTransaction(new BananaTransactionDto());
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertFalse(result.isEmpty());
+        assertThat(result, not(Matchers.hasItem(hasViolation(FROM_ACCOUNT, testee.getUuid()))));
+        assertThat(result, not(Matchers.hasItem(hasViolation(TO_ACCOUNT, testee.getUuid()))));
+    }
+
     @Test
     public void validate_emtpyRequiredFieldsInIntegratedTransation_createsViolations() {
         //arrange
         final BananaTransactionDto integrated = new BananaTransactionDto();
         final BananaTransactionDto testee = new BananaTransactionDto();
-        testee.addComposedTransaction(integrated);
+        testee.addIntegratedTransaction(integrated);
         //act
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result, Matchers.hasItems( //
-            not(hasViolation("toAccount", integrated.getUuid())), //
-            hasViolation("fromAccount", integrated.getUuid()) //
-        ));
+        assertThat(result, Matchers.hasItem(hasViolation(FROM_ACCOUNT, integrated.getUuid())));
+        assertThat(result, not(Matchers.hasItem(hasViolation(TO_ACCOUNT, integrated.getUuid()))));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void validate_toAccountInIntegratedTransation_createsViolations() {
         //arrange
         final BananaTransactionDto integrated = new BananaTransactionDto();
         integrated.setCreditAccount("2000");
         final BananaTransactionDto testee = new BananaTransactionDto();
-        testee.addComposedTransaction(integrated);
+        testee.addIntegratedTransaction(integrated);
         //act
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result, Matchers.hasItems( //
-            not(hasViolation("fromAccount", integrated.getUuid())), //
-            hasViolation("toAccount", integrated.getUuid()) //
-        ));
+        assertThat(result, Matchers.hasItem(hasViolation(FROM_ACCOUNT, integrated.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(TO_ACCOUNT, integrated.getUuid())));
     }
 
     @Test
@@ -116,10 +126,10 @@ public class BananaValidatorTest {
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertFalse(result.isEmpty());
-        assertTrue(hasViolationAtField(result, "vatPct"));
-        assertTrue(hasViolationAtField(result, "amountWithoutVat"));
-        assertTrue(hasViolationAtField(result, "amountVat"));
-        assertTrue(hasViolationAtField(result, "vatAccount"));
+        assertThat(result, Matchers.hasItem(hasViolation(VAT_PCT, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(AMOUNT_WITHOUT_VAT, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(AMOUNT_VAT, testee.getUuid())));
+        assertThat(result, Matchers.hasItem(hasViolation(VAT_ACCOUNT, testee.getUuid())));
     }
 
     @Test
@@ -134,14 +144,10 @@ public class BananaValidatorTest {
         //act
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
-        assertFalse(hasViolationAtField(result, "vatPct"));
-        assertFalse(hasViolationAtField(result, "amountWithoutVat"));
-        assertFalse(hasViolationAtField(result, "amountVat"));
-        assertFalse(hasViolationAtField(result, "vatAccount"));
-    }
-
-    private boolean hasViolationAtField(final Set<ConstraintViolation<BananaTransactionDto>> violations, final String field) {
-        return violations.stream().anyMatch(constraint -> constraint.getPropertyPath().toString().equals(field));
+        assertThat(result, not(Matchers.hasItem(hasViolation(VAT_PCT, testee.getUuid()))));
+        assertThat(result, not(Matchers.hasItem(hasViolation(AMOUNT_WITHOUT_VAT, testee.getUuid()))));
+        assertThat(result, not(Matchers.hasItem(hasViolation(AMOUNT_VAT, testee.getUuid()))));
+        assertThat(result, not(Matchers.hasItem(hasViolation(VAT_ACCOUNT, testee.getUuid()))));
     }
 
     @Test
@@ -152,12 +158,12 @@ public class BananaValidatorTest {
         final Map<UUID, List<BananaViolation>> result = new BananaValidator().validate(Arrays.asList(testee));
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation("date")));
-        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation("document")));
-        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation("amount")));
-        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation("description")));
-        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation("toAccount")));
-        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation("fromAccount")));
+        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(DATE)));
+        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(DOCUMENT)));
+        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(AMOUNT)));
+        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(DESCRIPTION)));
+        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(TO_ACCOUNT)));
+        assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(FROM_ACCOUNT)));
     }
 
     @Test
@@ -165,21 +171,21 @@ public class BananaValidatorTest {
         //arrange
         final BananaTransactionDto main = new BananaTransactionDto();
         final BananaTransactionDto integrated = new BananaTransactionDto();
-        main.addComposedTransaction(integrated);
+        main.addIntegratedTransaction(integrated);
         //act
         final Map<UUID, List<BananaViolation>> result = new BananaValidator().validate(Arrays.asList(main));
         //assert
         assertFalse(result.isEmpty());
-        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation("date")));
-        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation("document")));
-        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation("description")));
-        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation("toAccount")));
-        assertThat(result.get(main.getUuid()), Matchers.hasItem(not(hasViolation("fromAccount"))));
-        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation("date")));
-        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation("document")));
-        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation("description")));
-        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(not(hasViolation("toAccount"))));
-        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation("fromAccount")));
+        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation(DATE)));
+        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation(DOCUMENT)));
+        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation(DESCRIPTION)));
+        assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation(TO_ACCOUNT)));
+        assertThat(result.get(main.getUuid()), Matchers.hasItem(not(hasViolation(FROM_ACCOUNT))));
+        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation(DATE)));
+        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation(DOCUMENT)));
+        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation(DESCRIPTION)));
+        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(not(hasViolation(TO_ACCOUNT))));
+        assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation(FROM_ACCOUNT)));
     }
 
     private Matcher<Object> hasViolation(final String field) {

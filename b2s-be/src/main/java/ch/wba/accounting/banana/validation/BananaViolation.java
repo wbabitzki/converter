@@ -11,6 +11,12 @@ public class BananaViolation {
     private final String field;
     private final String message;
 
+    public BananaViolation(final UUID uuid, final String field, final String message) {
+        this.uuid = uuid;
+        this.field = field;
+        this.message = message;
+    }
+
     public BananaViolation(final ConstraintViolation<BananaTransactionDto> violation) {
         final BananaTransactionDto dto = violation.getRootBean();
         uuid = dto.getUuid();

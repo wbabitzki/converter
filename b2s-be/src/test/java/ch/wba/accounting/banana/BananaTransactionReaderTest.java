@@ -82,7 +82,7 @@ public class BananaTransactionReaderTest {
         assertThat(transaction.getDebitAccount(), is("1000"));
         assertThat(transaction.getCreditAccount(), is("1020"));
         assertThat(transaction.getAmount(), is(BigDecimalConverter.toAmount("2000.00")));
-        assertNull(transaction.getVatCode());
+        assertThat(transaction.getVatCode(), is(""));
         assertNull(transaction.getVatPct());
         assertNull(transaction.getAmountWithoutVat());
         assertNull(transaction.getAmountVat());
@@ -114,7 +114,7 @@ public class BananaTransactionReaderTest {
         assertThat(result.get(0), is(firstSimple));
         assertFalse(result.get(0).isComposedTransaction());
         assertThat(result.get(1), is(firstComposed));
-        assertThat(result.get(1).getComposedTransactions().get(0), is(secondComposed));
+        assertThat(result.get(1).getIntegratedTransactions().get(0), is(secondComposed));
         assertTrue(result.get(1).isComposedTransaction());
         assertThat(result.get(2), is(secondSimple));
         assertFalse(result.get(2).isComposedTransaction());

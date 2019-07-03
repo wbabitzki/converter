@@ -72,7 +72,7 @@ public class BananaTransactionReader {
         Collectors.toMap(BananaTransactionDto::getDocument, // key
             t -> t, // value
             (main, additional) -> {
-                main.addComposedTransaction(additional);
+                main.addIntegratedTransaction(additional);
                 return main;
             }, // merge function for the transaction with the same document identifier
             LinkedHashMap::new);

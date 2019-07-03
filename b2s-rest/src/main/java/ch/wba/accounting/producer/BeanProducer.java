@@ -1,11 +1,13 @@
 package ch.wba.accounting.producer;
 
-import ch.wba.accounting.banana.BananaTransactionReader;
-import ch.wba.accounting.sega.ConverterService;
+import java.io.Serializable;
 
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
-import java.io.Serializable;
+
+import ch.wba.accounting.banana.BananaTransactionReader;
+import ch.wba.accounting.banana.validation.BananaValidator;
+import ch.wba.accounting.sega.ConverterService;
 
 @SessionScoped
 public class BeanProducer implements Serializable {
@@ -19,5 +21,10 @@ public class BeanProducer implements Serializable {
     @Produces
     public ConverterService getConverterServicer() {
         return new ConverterService();
+    }
+
+    @Produces
+    public BananaValidator getBananaValidator() {
+        return new BananaValidator();
     }
 }
