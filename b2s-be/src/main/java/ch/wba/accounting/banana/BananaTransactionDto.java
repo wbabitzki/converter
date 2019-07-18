@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
@@ -153,7 +154,8 @@ public class BananaTransactionDto {
     }
 
     public boolean isWithVat() {
-        return vatCode != null || vatPct != null || amountWithoutVat != null || amountVat != null;
+        final boolean isVatCodeEmpty = Optional.ofNullable(vatCode).filter(String::isEmpty).isPresent();
+        return !isVatCodeEmpty || vatPct != null || amountWithoutVat != null || amountVat != null;
     }
 
     public boolean isIntegrated() {

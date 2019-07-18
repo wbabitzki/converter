@@ -19,7 +19,6 @@ import java.util.UUID;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -147,7 +146,7 @@ public class BananaResourceIT {
             .post(Entity.json(jsonString));
         //assert
         assertThat(response.getStatus(), is(200));
-        final Map<UUID, List<BananaViolation>> result = response.readEntity(new GenericType<Map<UUID, List<BananaViolation>>>() {
+        final Map<UUID, List<BananaViolation>> result = objectMapper.readValue(response.readEntity(String.class), new TypeReference<Map<UUID, List<BananaViolation>>>() {
             // Empty
         });
         assertTrue(result.isEmpty());

@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +187,22 @@ public class BananaValidatorTest {
         assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation(DESCRIPTION)));
         assertThat(result.get(integrated.getUuid()), Matchers.hasItem(not(hasViolation(TO_ACCOUNT))));
         assertThat(result.get(integrated.getUuid()), Matchers.hasItem(hasViolation(FROM_ACCOUNT)));
+    }
+
+    @Test
+    public void validate_amountWithoutVat_noViolations() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setDate(LocalDate.now());
+        testee.setDocument("38");
+        testee.setDescription("Test Description Amount without VAT");
+        testee.setDebitAccount("1111");
+        testee.setCreditAccount("2222");
+        testee.setAmount(new BigDecimal("2500"));
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertTrue(result.isEmpty());
     }
 
     private Matcher<Object> hasViolation(final String field) {
