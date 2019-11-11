@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import ch.wba.accounting.banana.validation.ComposedTransactionSumConstraint;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import ch.wba.accounting.banana.validation.FromAccountConstraint;
@@ -19,6 +20,7 @@ import ch.wba.accounting.banana.validation.WithVatChecks;
 
 @FromAccountConstraint
 @ToAccountConstraint
+@ComposedTransactionSumConstraint
 public class BananaTransactionDto {
     private final UUID uuid;
     @NotNull

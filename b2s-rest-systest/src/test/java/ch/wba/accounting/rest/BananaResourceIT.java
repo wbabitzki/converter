@@ -1,9 +1,35 @@
 package ch.wba.accounting.rest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.collection.IsCollectionWithSize.*;
-import static org.junit.Assert.*;
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.banana.validation.BananaViolation;
+import ch.wba.accounting.sega.SegaDto;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -16,49 +42,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-import org.junit.Before;
-import org.junit.Test;
-
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.banana.validation.BananaViolation;
-import ch.wba.accounting.sega.SegaDto;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.collection.IsCollectionWithSize.*;
+import static org.junit.Assert.*;
 
 public class BananaResourceIT {
-    static final String SERVICE_URI = "http://localhost:8080/b2s-rest/rest/banana/";
-    static final String PATH_READ_FILE = "readFile";
-    static final String PATH_CONVERT = "convert";
-    static final String PATH_VALIDATE = "validate";
-    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
+    private static final String SERVICE_URI = "http://localhost:8080/b2s-rest/rest/banana/";
+    private static final String PATH_READ_FILE = "readFile";
+    private static final String PATH_CONVERT = "convert";
+    private static final String PATH_VALIDATE = "validate";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
     private static final String TEST_BANANA_JSON = "test-banana.json";
     private static final UUID TEST_UUID = UUID.fromString("34844b03-d68d-45f6-93b4-b07701f7a016");
+
     private WebTarget tut;
     private ObjectMapper objectMapper;
 
@@ -69,7 +65,7 @@ public class BananaResourceIT {
         final JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDate.class, new JsonSerializer<LocalDate>() {
             @Override
-            public void serialize(final LocalDate value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException, JsonProcessingException {
+            public void serialize(final LocalDate value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
                 gen.writeString(value.format(FORMATTER));
             }
         });
@@ -86,12 +82,12 @@ public class BananaResourceIT {
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.registerModule(new SimpleModule().addDeserializer(BananaViolation.class, new JsonDeserializer<BananaViolation>() {
             @Override
-            public BananaViolation deserialize(final JsonParser jsonParser, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            public BananaViolation deserialize(final JsonParser jsonParser, final DeserializationContext ctxt) throws IOException {
                 final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
                 return new BananaViolation( //
-                    UUID.fromString(((TextNode) node.get("uuid")).asText()), //
-                    ((TextNode) node.get("field")).asText(), //
-                    ((TextNode) node.get("message")).asText());
+                    UUID.fromString(node.get("uuid").asText()), //
+                    node.get("field").asText(), //
+                    node.get("message").asText());
             }
         }));
     }
@@ -136,7 +132,7 @@ public class BananaResourceIT {
     }
 
     @Test
-    public void validate_validListBananaDto_createsJsonEmtyList() throws Exception {
+    public void validate_validListBananaDto_createsJsonEmptyList() throws Exception {
         //arrange
         final String jsonString = readTestFile(TEST_BANANA_JSON);
         //act

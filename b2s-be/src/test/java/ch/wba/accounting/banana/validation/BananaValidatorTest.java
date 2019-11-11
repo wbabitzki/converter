@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,7 @@ public class BananaValidatorTest {
     private static final String VAT_ACCOUNT = "vatAccount";
 
     @Test
-    public void validate_emtpyRequiredFields_createsViolations() {
+    public void validate_emptyRequiredFields_createsViolations() {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
         //act
@@ -47,7 +48,7 @@ public class BananaValidatorTest {
     }
 
     @Test
-    public void validate_emtpyRequiredFieldsInComposedTransation_createsViolations() {
+    public void validate_emptyRequiredFieldsInComposedTransaction_createsViolations() {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
         testee.addIntegratedTransaction(new BananaTransactionDto());
@@ -63,7 +64,7 @@ public class BananaValidatorTest {
     }
 
     @Test
-    public void validate_fromAccountInComposedTransation_createsViolations() {
+    public void validate_fromAccountInComposedTransaction_createsViolations() {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
         testee.setDebitAccount("2000");
@@ -76,7 +77,7 @@ public class BananaValidatorTest {
     }
 
     @Test
-    public void validate_toAccountInComposedTransation_noViolations() {
+    public void validate_toAccountInComposedTransaction_noViolations() {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
         testee.setCreditAccount("2000");
@@ -90,7 +91,7 @@ public class BananaValidatorTest {
     }
 
     @Test
-    public void validate_emtpyRequiredFieldsInIntegratedTransation_createsViolations() {
+    public void validate_emtpyRequiredFieldsInIntegratedTransaction_createsViolations() {
         //arrange
         final BananaTransactionDto integrated = new BananaTransactionDto();
         final BananaTransactionDto testee = new BananaTransactionDto();
@@ -104,7 +105,7 @@ public class BananaValidatorTest {
     }
 
     @Test
-    public void validate_toAccountInIntegratedTransation_createsViolations() {
+    public void validate_toAccountInIntegratedTransaction_createsViolations() {
         //arrange
         final BananaTransactionDto integrated = new BananaTransactionDto();
         integrated.setCreditAccount("2000");
@@ -156,7 +157,7 @@ public class BananaValidatorTest {
         //arrange
         final BananaTransactionDto testee = new BananaTransactionDto();
         //act
-        final Map<UUID, List<BananaViolation>> result = new BananaValidator().validate(Arrays.asList(testee));
+        final Map<UUID, List<BananaViolation>> result = new BananaValidator().validate(Collections.singletonList(testee));
         //assert
         assertFalse(result.isEmpty());
         assertThat(result.get(testee.getUuid()), Matchers.hasItem(hasViolation(DATE)));
@@ -174,7 +175,7 @@ public class BananaValidatorTest {
         final BananaTransactionDto integrated = new BananaTransactionDto();
         main.addIntegratedTransaction(integrated);
         //act
-        final Map<UUID, List<BananaViolation>> result = new BananaValidator().validate(Arrays.asList(main));
+        final Map<UUID, List<BananaViolation>> result = new BananaValidator().validate(Collections.singletonList(main));
         //assert
         assertFalse(result.isEmpty());
         assertThat(result.get(main.getUuid()), Matchers.hasItem(hasViolation(DATE)));
@@ -205,6 +206,45 @@ public class BananaValidatorTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    public void validate_notComposedTransaction_noComposedTransactionSumViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setAmount(new BigDecimal("1500"));
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, not(Matchers.hasItem(hasViolation(ComposedTransactionSumValidator.FIELD_AMOUNT, testee.getUuid()))));
+    }
+
+    @Test
+    public void validate_invalidSumInComposedTransaction_createsViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setAmount(new BigDecimal("1500"));
+        testee.addIntegratedTransaction(new BananaTransactionDto());
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, Matchers.hasItem(hasViolation(ComposedTransactionSumValidator.FIELD_AMOUNT, //
+                "Invalid sum of the composed transaction. The amount of the main transaction: 1500.00, but the sum of integrated transaction: 0.00", //
+                testee.getUuid())));
+    }
+
+    @Test
+    public void validate_correctSumInComposedTransaction_createsViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setAmount(new BigDecimal("1500"));
+        BananaTransactionDto integrated = new BananaTransactionDto();
+        integrated.setAmount(new BigDecimal("1500"));
+        testee.addIntegratedTransaction(integrated);
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, not(Matchers.hasItem(hasViolation(ComposedTransactionSumValidator.FIELD_AMOUNT, testee.getUuid()))));
+    }
+
     private Matcher<Object> hasViolation(final String field) {
         return Matchers.hasProperty("field", is(field));
     }
@@ -213,6 +253,14 @@ public class BananaValidatorTest {
         return Matchers.allOf( //
             Matchers.hasProperty("propertyPath", Matchers.hasToString(field)), //
             Matchers.hasProperty("rootBean", Matchers.hasProperty("uuid", is(uuid))) //
+        );
+    }
+
+    private Matcher<ConstraintViolation<BananaTransactionDto>> hasViolation(final String field, final String message, final UUID uuid) {
+        return Matchers.allOf( //
+                Matchers.hasProperty("propertyPath", Matchers.hasToString(field)), //
+                Matchers.hasProperty("rootBean", Matchers.hasProperty("uuid", is(uuid))), //
+                Matchers.hasProperty("messageTemplate", is(message)) //
         );
     }
 }
