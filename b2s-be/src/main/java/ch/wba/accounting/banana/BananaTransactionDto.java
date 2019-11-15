@@ -1,5 +1,16 @@
 package ch.wba.accounting.banana;
 
+import ch.wba.accounting.banana.validation.ComposedTransactionSumConstraint;
+import ch.wba.accounting.banana.validation.FromAccountConstraint;
+import ch.wba.accounting.banana.validation.ToAccountConstraint;
+import ch.wba.accounting.banana.validation.WithVatChecks;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,19 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import ch.wba.accounting.banana.validation.ComposedTransactionSumConstraint;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import ch.wba.accounting.banana.validation.FromAccountConstraint;
-import ch.wba.accounting.banana.validation.ToAccountConstraint;
-import ch.wba.accounting.banana.validation.WithVatChecks;
-
 @FromAccountConstraint
 @ToAccountConstraint
 @ComposedTransactionSumConstraint
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "uuid")
 public class BananaTransactionDto {
     private final UUID uuid;
     @NotNull
@@ -44,7 +47,7 @@ public class BananaTransactionDto {
     @NotBlank(groups = WithVatChecks.class)
     private String vatAccount = "";
     private final List<BananaTransactionDto> integratedTransactions = new ArrayList<>();
-    private boolean isIntegrated;
+    private BananaTransactionDto mainTransaction;
 
     public BananaTransactionDto() {
         uuid = UUID.randomUUID();
@@ -147,7 +150,7 @@ public class BananaTransactionDto {
     }
 
     public void addIntegratedTransaction(final BananaTransactionDto transaction) {
-        transaction.isIntegrated = true;
+        transaction.mainTransaction = this;
         this.integratedTransactions.add(transaction);
     }
 
@@ -161,7 +164,11 @@ public class BananaTransactionDto {
     }
 
     public boolean isIntegrated() {
-        return isIntegrated;
+        return this.mainTransaction != null;
+    }
+
+    BananaTransactionDto getMainTransaction() {
+        return mainTransaction;
     }
 
     @Override

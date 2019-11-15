@@ -1,6 +1,6 @@
 [
     {
-        "uuid": "34844b03-d68d-45f6-93b4-b07701f7a016",
+        "uuid": "83e22e1d-440e-4c09-bebb-e41ef7031778",
         "date": "5.1.2018",
         "document": "1",
         "description": "Zahlungseingang Rechnung 103",
@@ -13,19 +13,19 @@
         "amountVat": -1111.11,
         "vatAccount": "2201",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": true,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": true
+        "integrated": false
     },
     {
-        "uuid": "0346a209-9068-40da-bc86-14966a6b646d",
+        "uuid": "800335f0-89f7-494c-9120-c2c567da8a0a",
         "date": "5.1.2018",
         "document": "2",
         "description": "Bareinzahlung Kasse",
         "debitAccount": "",
         "creditAccount": "1020",
-        "amount": 2000.00,
+        "amount": 3500.00,
         "vatCode": "",
         "vatPct": null,
         "amountWithoutVat": null,
@@ -33,7 +33,7 @@
         "vatAccount": "",
         "integratedTransactions": [
             {
-                "uuid": "18056aa9-381b-4d66-b3ed-e3923b009d3a",
+                "uuid": "23b4b3a1-2a0e-45e6-9ba9-b8d2a8e75941",
                 "date": "15.1.2018",
                 "document": "2",
                 "description": "Zahlungseingang Honorare - Rechnung 105",
@@ -46,19 +46,19 @@
                 "amountVat": -250.23,
                 "vatAccount": "2201",
                 "integratedTransactions": [],
-                "isIntegrateg": true,
+                "mainTransaction": "800335f0-89f7-494c-9120-c2c567da8a0a",
+                "withVat": true,
                 "composedTransaction": false,
-                "integrated": true,
-                "withVat": true
+                "integrated": true
             }
         ],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": false,
         "composedTransaction": true,
-        "integrated": false,
-        "withVat": false
+        "integrated": false
     },
     {
-        "uuid": "2d5f75f7-3769-4750-a2cb-ef4c36cc56ce",
+        "uuid": "70227721-6268-4c00-8234-dc435bc3f391",
         "date": "6.2.2018",
         "document": "3",
         "description": "Zahlungsausgang Mietzins",
@@ -71,13 +71,13 @@
         "amountVat": null,
         "vatAccount": "",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": false,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": false
+        "integrated": false
     },
     {
-        "uuid": "57135199-00b5-49c9-b85b-d35954cdd01f",
+        "uuid": "f4d52e72-d0bf-4904-9a11-98107d974568",
         "date": "12.2.2018",
         "document": "4",
         "description": "Kauf neuer PC",
@@ -90,16 +90,16 @@
         "amountVat": 63.63,
         "vatAccount": "2201",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": true,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": true
+        "integrated": false
     },
     {
-        "uuid": "5890bd9a-a55c-441d-8d91-3778da180f89",
+        "uuid": "88344637-57dc-4123-8582-9a3912996249",
         "date": "3.3.2018",
         "document": "5",
-        "description": "Spesenrückerstattung (Pauschale)",
+        "description": "Spesenr�ckerstattung (Pauschale)",
         "debitAccount": "5830",
         "creditAccount": "1000",
         "amount": 1500.00,
@@ -109,13 +109,13 @@
         "amountVat": null,
         "vatAccount": "",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": false,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": false
+        "integrated": false
     },
     {
-        "uuid": "03e86901-843f-4628-a1bc-a13407be632f",
+        "uuid": "1f59105f-2098-4b14-99de-481579e94592",
         "date": "15.3.2018",
         "document": "6",
         "description": "UVG-Pr�mie",
@@ -128,16 +128,16 @@
         "amountVat": null,
         "vatAccount": "",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": false,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": false
+        "integrated": false
     },
     {
-        "uuid": "dce5d272-b694-4c8c-992e-b48bfba475fa",
+        "uuid": "81f1e8ca-bc6e-49cc-8dbd-a696033f7939",
         "date": "16.3.2018",
         "document": "7",
-        "description": "vierteljährliche Akontozahlung AHV-Beiträge",
+        "description": "viertelj�hrliche Akontozahlung AHV-Beitr�ge",
         "debitAccount": "5700",
         "creditAccount": "1020",
         "amount": 2590.00,
@@ -147,13 +147,13 @@
         "amountVat": null,
         "vatAccount": "",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": false,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": false
+        "integrated": false
     },
     {
-        "uuid": "2e0aa6f9-911d-4c31-9591-87d8150c0e3f",
+        "uuid": "e19e125a-9522-42a8-ba77-64f9932f0109",
         "date": "22.3.2018",
         "document": "8",
         "description": "Bezahlung verschiedener Rechnungen",
@@ -167,7 +167,7 @@
         "vatAccount": "",
         "integratedTransactions": [
             {
-                "uuid": "06374cba-2b46-4128-8aae-8f67898d7c47",
+                "uuid": "58a25342-7f29-43c5-a602-028203f290e6",
                 "date": "22.3.2018",
                 "document": "8",
                 "description": "Stromrechnung",
@@ -180,13 +180,13 @@
                 "amountVat": 17.87,
                 "vatAccount": "2201",
                 "integratedTransactions": [],
-                "isIntegrateg": true,
+                "mainTransaction": "e19e125a-9522-42a8-ba77-64f9932f0109",
+                "withVat": true,
                 "composedTransaction": false,
-                "integrated": true,
-                "withVat": true
+                "integrated": true
             },
             {
-                "uuid": "8e1e52c6-47f8-4cf2-9e1b-d9cb6d9c3ab0",
+                "uuid": "dd86bc7b-4b21-49d2-a975-e8312b6071d2",
                 "date": "22.3.2018",
                 "document": "8",
                 "description": "Telefonrechnung",
@@ -199,16 +199,16 @@
                 "amountVat": 8.58,
                 "vatAccount": "2201",
                 "integratedTransactions": [],
-                "isIntegrateg": true,
+                "mainTransaction": "e19e125a-9522-42a8-ba77-64f9932f0109",
+                "withVat": true,
                 "composedTransaction": false,
-                "integrated": true,
-                "withVat": true
+                "integrated": true
             },
             {
-                "uuid": "c9270e68-db4c-4dff-8800-31a4e5d193d3",
+                "uuid": "bb0a28b1-30b4-45e7-8b50-839c68adf09f",
                 "date": "22.3.2018",
                 "document": "8",
-                "description": "Rechnung für Büromaterial",
+                "description": "Rechnung f�r B�romaterial",
                 "debitAccount": "6700",
                 "creditAccount": "",
                 "amount": 109.00,
@@ -218,19 +218,19 @@
                 "amountVat": 7.79,
                 "vatAccount": "2201",
                 "integratedTransactions": [],
-                "isIntegrateg": true,
+                "mainTransaction": "e19e125a-9522-42a8-ba77-64f9932f0109",
+                "withVat": true,
                 "composedTransaction": false,
-                "integrated": true,
-                "withVat": true
+                "integrated": true
             }
         ],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": false,
         "composedTransaction": true,
-        "integrated": false,
-        "withVat": false
+        "integrated": false
     },
     {
-        "uuid": "a1a27f3b-a9a9-49eb-98f4-1a8835180706",
+        "uuid": "3898c838-9964-44ce-9463-a1cd06ceb1e3",
         "date": "23.3.2018",
         "document": "9",
         "description": "Zahlungseingang Honorare - Rechnung 110",
@@ -243,16 +243,93 @@
         "amountVat": -350.32,
         "vatAccount": "2201",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": true,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": true
+        "integrated": false
     },
     {
-        "uuid": "6f40fc55-92b0-4713-bc08-32a9ee31529e",
+        "uuid": "d3336970-8c78-4958-86fe-a9243a075598",
+        "date": "24.3.2018",
+        "document": "10",
+        "description": "Zammelzahlung",
+        "debitAccount": "",
+        "creditAccount": "1020",
+        "amount": 5846.00,
+        "vatCode": "",
+        "vatPct": null,
+        "amountWithoutVat": null,
+        "amountVat": null,
+        "vatAccount": "",
+        "integratedTransactions": [
+            {
+                "uuid": "80be95bd-a7d1-46a0-8a77-ba01c7c30ace",
+                "date": "24.3.2018",
+                "document": "10",
+                "description": "Kauf Software-Lizenz - Auslandrechnung Nr. E123",
+                "debitAccount": "1520",
+                "creditAccount": "",
+                "amount": 1850.00,
+                "vatCode": "M0",
+                "vatPct": null,
+                "amountWithoutVat": 1850.00,
+                "amountVat": null,
+                "vatAccount": "2201",
+                "integratedTransactions": [],
+                "mainTransaction": "d3336970-8c78-4958-86fe-a9243a075598",
+                "withVat": true,
+                "composedTransaction": false,
+                "integrated": true
+            },
+            {
+                "uuid": "3fb37de9-6bdc-4221-97e8-26346f90d7e5",
+                "date": "24.3.2018",
+                "document": "10",
+                "description": "Selbstauferlegung MwSt f�r Auslandeinkauf (Bezugsteuer)",
+                "debitAccount": "1090",
+                "creditAccount": "",
+                "amount": 1998.00,
+                "vatCode": "B77",
+                "vatPct": -7.7,
+                "amountWithoutVat": 1855.15,
+                "amountVat": -142.85,
+                "vatAccount": "2201",
+                "integratedTransactions": [],
+                "mainTransaction": "d3336970-8c78-4958-86fe-a9243a075598",
+                "withVat": true,
+                "composedTransaction": false,
+                "integrated": true
+            },
+            {
+                "uuid": "1868ed7e-1bf6-4f71-b698-52cec477ba91",
+                "date": "24.3.2018",
+                "document": "10",
+                "description": "R�ckerstattung MwSt f�r Auslandeinkauf (Bezugsteuer)",
+                "debitAccount": "1090",
+                "creditAccount": "",
+                "amount": 1998.00,
+                "vatCode": "M77",
+                "vatPct": 7.7,
+                "amountWithoutVat": 1855.15,
+                "amountVat": 142.85,
+                "vatAccount": "2201",
+                "integratedTransactions": [],
+                "mainTransaction": "d3336970-8c78-4958-86fe-a9243a075598",
+                "withVat": true,
+                "composedTransaction": false,
+                "integrated": true
+            }
+        ],
+        "mainTransaction": null,
+        "withVat": false,
+        "composedTransaction": true,
+        "integrated": false
+    },
+    {
+        "uuid": "d0f34f7f-8c0f-4e49-8950-055545a7bf83",
         "date": "30.3.2018",
         "document": "11",
-        "description": "Bezahlung Rechnung für Büromaterial",
+        "description": "Bezahlung Rechnung f�r B�romaterial",
         "debitAccount": "6500",
         "creditAccount": "1020",
         "amount": 655.00,
@@ -262,9 +339,9 @@
         "amountVat": 46.83,
         "vatAccount": "2201",
         "integratedTransactions": [],
-        "isIntegrateg": false,
+        "mainTransaction": null,
+        "withVat": true,
         "composedTransaction": false,
-        "integrated": false,
-        "withVat": true
+        "integrated": false
     }
 ]

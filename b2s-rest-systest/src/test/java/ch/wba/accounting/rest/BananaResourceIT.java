@@ -51,8 +51,10 @@ public class BananaResourceIT {
     private static final String PATH_READ_FILE = "readFile";
     private static final String PATH_CONVERT = "convert";
     private static final String PATH_VALIDATE = "validate";
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
     private static final String TEST_BANANA_JSON = "test-banana.json";
+    private static final String TEST_INVALID_BANANA_JSON = "test-invalid-banana.json";
+    private static final String TEST_BANANA_CSV = "test-banana.csv";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
     private static final UUID TEST_UUID = UUID.fromString("34844b03-d68d-45f6-93b4-b07701f7a016");
 
     private WebTarget tut;
@@ -95,7 +97,7 @@ public class BananaResourceIT {
     @Test
     public void readFile_csvFile_readsAllRecords() throws Exception {
         // arrange
-        final File file = new File(getClass().getClassLoader().getResource("test-banana.csv").getFile());
+        final File file = new File(getClass().getClassLoader().getResource(TEST_BANANA_CSV).getFile());
         final FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file", file);
         Response response = null;
         // act
@@ -128,7 +130,7 @@ public class BananaResourceIT {
         final List<SegaDto> result = objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<SegaDto>>() {
             // Empty
         });
-        assertThat(result, hasSize(30));
+        assertThat(result, hasSize(36));
     }
 
     @Test
@@ -151,7 +153,7 @@ public class BananaResourceIT {
     @Test
     public void validate_invalidListBananaDto_createsBananaViolationMap() throws Exception {
         //arrange
-        final String jsonString = readTestFile("test-invalid-banana.json");
+        final String jsonString = readTestFile(TEST_INVALID_BANANA_JSON);
         //act
         final Response response = this.tut //
             .path(PATH_VALIDATE) //

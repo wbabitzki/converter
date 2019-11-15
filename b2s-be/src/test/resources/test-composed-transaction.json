@@ -1,0 +1,39 @@
+{
+  "uuid": "1012dfd1-dee4-4ccc-b405-9d8a5918ff37",
+  "date": null,
+  "document": "",
+  "description": "",
+  "debitAccount": "",
+  "creditAccount": "",
+  "amount": null,
+  "vatCode": "",
+  "vatPct": null,
+  "amountWithoutVat": null,
+  "amountVat": null,
+  "vatAccount": "",
+  "integratedTransactions": [
+    {
+      "uuid": "e83144d6-8bad-4a6e-a087-223383d88946",
+      "date": null,
+      "document": "",
+      "description": "",
+      "debitAccount": "",
+      "creditAccount": "",
+      "amount": null,
+      "vatCode": "",
+      "vatPct": null,
+      "amountWithoutVat": null,
+      "amountVat": null,
+      "vatAccount": "",
+      "integratedTransactions": [],
+      "mainTransaction": "1012dfd1-dee4-4ccc-b405-9d8a5918ff37",
+      "composedTransaction": false,
+      "integrated": true,
+      "withVat": false
+    }
+  ],
+  "mainTransaction": null,
+  "composedTransaction": true,
+  "integrated": false,
+  "withVat": false
+}
