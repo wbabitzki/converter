@@ -167,7 +167,7 @@ public class BananaTransactionDto {
         return this.mainTransaction != null;
     }
 
-    BananaTransactionDto getMainTransaction() {
+    public BananaTransactionDto getMainTransaction() {
         return mainTransaction;
     }
 
