@@ -175,7 +175,7 @@ public class DefaultObjectMapperTest {
         //act
         final String result = testee.writeValueAsString(segaDto);
         //assert
-        assertThat(result, containsString("\"Netto\":\"1000.00\""));
+        assertThat(result, containsString("\"Netto\":\"1'000.00\""));
     }
 
     @Test

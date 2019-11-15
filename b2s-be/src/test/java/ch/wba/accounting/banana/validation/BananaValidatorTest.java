@@ -227,7 +227,7 @@ public class BananaValidatorTest {
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertThat(result, Matchers.hasItem(hasViolation(ComposedTransactionSumValidator.FIELD_AMOUNT, //
-                "Invalid sum of the composed transaction. The amount of the main transaction: 1500.00, but the sum of integrated transaction: 0.00", //
+                "Invalid sum of the composed transaction. The amount of the main transaction: 1'500.00, but the sum of integrated transaction: 0.00", //
                 testee.getUuid())));
     }
 
