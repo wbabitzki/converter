@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -245,6 +244,46 @@ public class BananaValidatorTest {
         assertThat(result, not(Matchers.hasItem(hasViolation(ComposedTransactionSumValidator.FIELD_AMOUNT, testee.getUuid()))));
     }
 
+    @Test
+    public void validate_notComposedTransaction_noIntegratedTransactionDateViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setDate(LocalDate.now());
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, not(Matchers.hasItem(hasViolation(IntegratedTransactionDateValidator.FIELD_DATE, testee.getUuid()))));
+    }
+
+    @Test
+    public void validate_invalidDateInIntegratedTransaction_createsViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setDate(LocalDate.of(2019, 11, 20));
+        final BananaTransactionDto composeTransaction = new BananaTransactionDto();
+        composeTransaction.setDate(LocalDate.of(2019, 11, 21));
+        composeTransaction.addIntegratedTransaction(testee);
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, Matchers.hasItem(hasViolation(IntegratedTransactionDateValidator.FIELD_DATE, //
+                "Invalid bill date '20.11.2019' in the integrated transaction. Date in the main transaction: 21.11.2019", //
+                testee.getUuid())));
+    }
+
+    @Test
+    public void validate_validDateInIntegratedTransaction_noIntegratedTransactionDateViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setDate(LocalDate.now());
+        final BananaTransactionDto composeTransaction = new BananaTransactionDto();
+        composeTransaction.setDate(LocalDate.now());
+        composeTransaction.addIntegratedTransaction(testee);
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, not(Matchers.hasItem(hasViolation(IntegratedTransactionDateValidator.FIELD_DATE, testee.getUuid()))));
+    }
     private Matcher<Object> hasViolation(final String field) {
         return Matchers.hasProperty("field", is(field));
     }

@@ -1,16 +1,5 @@
 package ch.wba.accounting.banana;
 
-import ch.wba.accounting.banana.validation.ComposedTransactionSumConstraint;
-import ch.wba.accounting.banana.validation.FromAccountConstraint;
-import ch.wba.accounting.banana.validation.ToAccountConstraint;
-import ch.wba.accounting.banana.validation.WithVatChecks;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,9 +8,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import ch.wba.accounting.banana.validation.ComposedTransactionSumConstraint;
+import ch.wba.accounting.banana.validation.FromAccountConstraint;
+import ch.wba.accounting.banana.validation.IntegratedTransactionDateConstraint;
+import ch.wba.accounting.banana.validation.ToAccountConstraint;
+import ch.wba.accounting.banana.validation.WithVatChecks;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @FromAccountConstraint
 @ToAccountConstraint
 @ComposedTransactionSumConstraint
+@IntegratedTransactionDateConstraint
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "uuid")
 public class BananaTransactionDto {

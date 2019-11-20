@@ -3,7 +3,7 @@ Datum,Beleg,Beschreibung,KtSoll,KtHaben,Betrag CHF,MwSt Code,Art Betrag,MwSt %,E
 ,,,,,,,,,,,,,,,,
 05.01.2018,1,Zahlungseingang Rechnung 103,1020,3000,15'000.00,B80,,-8,-8,13'888.89,-1'111.11,2201,,,-1'111.11,
 05.01.2018,2,Bareinzahlung Kasse,,1020,3'500.00,,,,,,,,,,,
-15.01.2018,2,Zahlungseingang Honorare - Rechnung 105,1020,,3'500.00,V77,,-7.7,-7.7,3'249.77,-250.23,2201,,,-250.23,
+05.01.2018,2,Zahlungseingang Honorare - Rechnung 105,1020,,3'500.00,V77,,-7.7,-7.7,3'249.77,-250.23,2201,,,-250.23,
 06.02.2018,3,Zahlungsausgang Mietzins,6000,1020,1'500.00,,,,,,,,,,,
 12.02.2018,4,Kauf neuer PC,1520,1020,890,I77,,7.7,7.7,826.37,63.63,2201,,,63.63,
 03.03.2018,5,Spesenr�ckerstattung (Pauschale),5830,1000,1'500.00,,,,,,,,,,,
