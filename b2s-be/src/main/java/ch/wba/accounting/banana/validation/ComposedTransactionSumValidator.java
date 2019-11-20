@@ -1,18 +1,19 @@
 package ch.wba.accounting.banana.validation;
 
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.converters.BigDecimalConverter;
-
-import javax.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 import java.util.Objects;
+
+import javax.validation.ConstraintValidatorContext;
+
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.converters.BigDecimalConverter;
 
 public class ComposedTransactionSumValidator extends AbstractBananaValidator<ComposedTransactionSumConstraint>{
 
     static final String FIELD_AMOUNT = "amount";
 
     @Override
-    public String getMessageTemplate(ConstraintValidatorContext ctx, BananaTransactionDto dto) {
+    public String getMessageTemplate(BananaTransactionDto dto, ConstraintValidatorContext ctx) {
         BigDecimal sum = sumAmountOfIntegratedTransactions(dto);
         return String.format(ctx.getDefaultConstraintMessageTemplate(), //
                 dto.getAmount() == null ? "0.00" : BigDecimalConverter.asString(dto.getAmount()), //
