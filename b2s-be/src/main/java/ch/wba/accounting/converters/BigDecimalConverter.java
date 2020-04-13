@@ -2,6 +2,8 @@ package ch.wba.accounting.converters;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
@@ -11,8 +13,18 @@ public class BigDecimalConverter {
     private static final int AMOUNT_SCALE = 2;
     private static final NumberFormat NUMBER_FORMATTER = createNumberFormatter();
 
+    private static DecimalFormatSymbols createFormatSymbols() {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("de", "CH"));
+        symbols.setGroupingSeparator('\'');
+        symbols.setDecimalSeparator('.');
+        return symbols;
+    }
+
     private static NumberFormat createNumberFormatter() {
-        NumberFormat format = NumberFormat.getNumberInstance(new Locale("de", "CH"));
+        DecimalFormatSymbols symbols = createFormatSymbols();
+
+        DecimalFormat format = new DecimalFormat();
+        format.setDecimalFormatSymbols(symbols);
         format.setMinimumFractionDigits(2);
         return format;
     }
@@ -38,6 +50,6 @@ public class BigDecimalConverter {
     }
 
     public static String asString(final BigDecimal number) {
-        return NUMBER_FORMATTER.format(number.setScale(2, RoundingMode.HALF_UP));
+        return NUMBER_FORMATTER.format(number.setScale(AMOUNT_SCALE, RoundingMode.HALF_UP));
     }
 }
