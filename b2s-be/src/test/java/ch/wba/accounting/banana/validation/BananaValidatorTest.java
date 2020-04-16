@@ -1,8 +1,11 @@
 package ch.wba.accounting.banana.validation;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import ch.wba.accounting.banana.BananaTransactionDto;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
+import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -11,13 +14,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.ConstraintViolation;
-
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
-import ch.wba.accounting.banana.BananaTransactionDto;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class BananaValidatorTest {
     private static final String DATE = "date";
@@ -226,7 +227,7 @@ public class BananaValidatorTest {
         final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
         //assert
         assertThat(result, Matchers.hasItem(hasViolation(ComposedTransactionSumValidator.FIELD_AMOUNT, //
-                "Invalid sum of the composed transaction. The amount of the main transaction: 1'500.00, but the sum of integrated transaction: 0.00", //
+                "Invalid sum of the composed transaction. The amount of the main transaction: 1500.00, but the sum of integrated transaction: 0.00", //
                 testee.getUuid())));
     }
 

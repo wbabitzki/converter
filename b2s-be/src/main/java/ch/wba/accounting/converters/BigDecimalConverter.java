@@ -1,33 +1,16 @@
 package ch.wba.accounting.converters;
 
+import ch.wba.accounting.format.FormatterWithDecimalSeparator;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Locale;
 
 public class BigDecimalConverter {
     private static final int PCT_SCALE = 1;
     private static final int AMOUNT_SCALE = 2;
-    private static final NumberFormat NUMBER_FORMATTER = createNumberFormatter();
-
-    private static DecimalFormatSymbols createFormatSymbols() {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("de", "CH"));
-        symbols.setGroupingSeparator('\'');
-        symbols.setDecimalSeparator('.');
-        return symbols;
-    }
-
-    private static NumberFormat createNumberFormatter() {
-        DecimalFormatSymbols symbols = createFormatSymbols();
-
-        DecimalFormat format = new DecimalFormat();
-        format.setDecimalFormatSymbols(symbols);
-        format.setMinimumFractionDigits(2);
-        return format;
-    }
+    private static final NumberFormat NUMBER_FORMATTER = FormatterWithDecimalSeparator.create();
 
     private BigDecimalConverter() {
         // Empty
@@ -42,8 +25,9 @@ public class BigDecimalConverter {
     }
 
     private static BigDecimal toBigDecimal(final String amountAsString) {
+        String onlyNumbers = amountAsString.replaceAll("[^0-9.-]", "");
         try {
-            return new BigDecimal(NUMBER_FORMATTER.parse(amountAsString).toString());
+            return new BigDecimal(NUMBER_FORMATTER.parse(onlyNumbers).toString());
         } catch (final ParseException e) {
             throw new IllegalArgumentException("Can not convert to number '" + amountAsString + "'");
         }

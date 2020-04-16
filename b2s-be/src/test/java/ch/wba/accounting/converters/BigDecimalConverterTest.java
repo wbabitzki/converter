@@ -1,19 +1,26 @@
 package ch.wba.accounting.converters;
 
-import static ch.wba.accounting.converters.BigDecimalConverter.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import static ch.wba.accounting.converters.BigDecimalConverter.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class BigDecimalConverterTest {
     @Test
     public void toAmount_numberAsString_converts() {
         assertThat(toAmount("200.02"), is(new BigDecimal("200.02")));
         assertThat(toAmount("200"), is(new BigDecimal("200.00")));
+    }
+
+    @Test
+    public void toAmount_withThousandDelimiters_coverts() {
         assertThat(toAmount("2'000.55"), is(new BigDecimal("2000.55")));
+        assertThat(toAmount("2'000"), is(new BigDecimal("2000.00")));
+        assertThat(toAmount("5’000.00"), is(new BigDecimal("5000.00")));
+        assertThat(toAmount("5’000"), is(new BigDecimal("5000.00")));
     }
 
     @Test
@@ -33,5 +40,11 @@ public class BigDecimalConverterTest {
         assertThat(asString(new BigDecimal("0.03")), is("0.03"));
         assertThat(asString(new BigDecimal("0.5")), is("0.50"));
         assertThat(asString(new BigDecimal("700.175")), is("700.18"));
+    }
+
+    @Test
+    public void toString_numbersWithThousands_convertsWithoutDelimiters() {
+        assertThat(asString(new BigDecimal("1000")), is("1000.00"));
+        assertThat(asString(new BigDecimal("1000.00")), is("1000.00"));
     }
 }

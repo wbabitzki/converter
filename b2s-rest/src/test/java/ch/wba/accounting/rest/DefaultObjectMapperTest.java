@@ -1,16 +1,15 @@
 package ch.wba.accounting.rest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import ch.wba.accounting.sega.SegaDto;
+import ch.wba.accounting.sega.SegaDto.SOLL_HABEN;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import ch.wba.accounting.sega.SegaDto;
-import ch.wba.accounting.sega.SegaDto.SOLL_HABEN;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 
 public class DefaultObjectMapperTest {
     private DefaultObjectMapper testee;
@@ -175,7 +174,7 @@ public class DefaultObjectMapperTest {
         //act
         final String result = testee.writeValueAsString(segaDto);
         //assert
-        assertThat(result, containsString("\"Netto\":\"1'000.00\""));
+        assertThat(result, containsString("\"Netto\":\"1000.00\""));
     }
 
     @Test
