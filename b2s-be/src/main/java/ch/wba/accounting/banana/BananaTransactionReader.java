@@ -1,5 +1,12 @@
 package ch.wba.accounting.banana;
 
+import ch.wba.accounting.banana.exception.BananaReaderExceptions;
+import ch.wba.accounting.converters.BigDecimalConverter;
+import ch.wba.accounting.converters.LocalDateConverter;
+import com.opencsv.CSVReader;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -11,17 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-
-import ch.wba.accounting.converters.BigDecimalConverter;
-import ch.wba.accounting.converters.LocalDateConverter;
-
-import com.opencsv.CSVReader;
 
 public class BananaTransactionReader {
     private static final int EXPORT_FIELD_NUMBER = 17;
@@ -50,22 +48,6 @@ public class BananaTransactionReader {
         }
     }
 
-    protected static final Function<String, BananaTransactionDto> STRING_TO_DTO_MAPPER = line -> {
-        String[] fields = null;
-        try (CSVReader csvReader = new CSVReader(new StringReader(line))) {
-            fields = csvReader.readNext();
-        } catch (final IOException e) {
-            System.err.println("A line cannot be read: " + e.getMessage());
-        }
-        if (fields == null || fields.length != EXPORT_FIELD_NUMBER) {
-            return null;
-        }
-        if (!LocalDateConverter.isDate(fields[Fields.DATE.ordinal()])) {
-            return null;
-        }
-        return createTransaction(fields);
-    };
-    //
     // Creates a map with the document identifier as keys and transactions as values
     // The transactions with the same document are added to the first transaction into the composedTransaction list
     protected static final Collector<BananaTransactionDto, ?, LinkedHashMap<String, BananaTransactionDto>> COMPOSED_TRANSACTION_COLLECTOR = //
@@ -133,10 +115,37 @@ public class BananaTransactionReader {
             .values());
     }
 
-    private List<BananaTransactionDto> mapFromString(final List<String> lines) {
+    protected List<BananaTransactionDto> mapFromString(final List<String> lines) {
         return lines.stream() //
-            .map(STRING_TO_DTO_MAPPER) //
+            .map(this::toBananaDto) //
             .filter(Objects::nonNull) //
             .collect(Collectors.toList());
+    }
+
+    protected BananaTransactionDto toBananaDto(String line) {
+        String[] fields = null;
+        try (CSVReader csvReader = getCsvReader(line)) {
+            fields = csvReader.readNext();
+        } catch (final IOException e) {
+            throw new BananaReaderExceptions.InvalidLineException(String.format("Invalid line: \"%s\"", line));
+        }
+        validateFields(line, fields);
+        return createTransaction(fields);
+    }
+
+    private void validateFields(String line, String[] fields) {
+        if (fields == null || fields.length != EXPORT_FIELD_NUMBER) {
+            final String message = String.format("Invalid fields number. Expected %d but was %d", EXPORT_FIELD_NUMBER,
+                    fields == null ? 0 : fields.length);
+            throw new BananaReaderExceptions.InvalidFieldNumberException(message);
+        }
+        final String date = fields[Fields.DATE.ordinal()];
+        if (!LocalDateConverter.isDate(date)) {
+            throw new BananaReaderExceptions.InvalidDateException(String.format("Invalid date: \"%s\" in line \"%s\"", date, line));
+        }
+    }
+
+    protected CSVReader getCsvReader(String line) {
+        return new CSVReader(new StringReader(line));
     }
 }

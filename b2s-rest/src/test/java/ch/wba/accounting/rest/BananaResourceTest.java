@@ -13,13 +13,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BananaResourceTest {
@@ -33,17 +33,6 @@ public class BananaResourceTest {
     ConverterService converterService;
     @Mock
     SegaWriter segaWriter;
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void readFile_ioException_throwsRuntimeException() {
-        //arrange && assert
-        final InputStream input = mock(InputStream.class);
-        when(bananaReader.readTransactions(any(BufferedReader.class))).thenThrow(IOException.class);
-        thrown.expect(RuntimeException.class);
-        //act
-        testee.readFile(input);
-    }
 
     @Test
     public void readFile_validParams_callsBananaReader() {
