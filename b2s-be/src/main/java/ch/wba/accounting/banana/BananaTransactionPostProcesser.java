@@ -1,13 +1,15 @@
 package ch.wba.accounting.banana;
 
-import static ch.wba.accounting.banana.BananaTransactionPredicates.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static ch.wba.accounting.banana.BananaTransactionPredicates.VAT_UST_77_CODE;
+import static ch.wba.accounting.banana.BananaTransactionPredicates.isRounded;
+import static ch.wba.accounting.banana.BananaTransactionPredicates.isUst;
 
 public class BananaTransactionPostProcesser {
     abstract class TransactionAdjuster implements Consumer<Integer> {
@@ -55,7 +57,8 @@ public class BananaTransactionPostProcesser {
                 final BananaTransactionDto roundedTransaction = transactions.get(i);
                 final BananaTransactionDto mainTransaction = transactions.get(i - 1);
                 if (!mainTransaction.getDocument().equals(roundedTransaction.getDocument())) {
-                    throw new IllegalArgumentException("The main transaction must belong to the same document as the rounded");
+                    throw new IllegalArgumentException(String.format("The main transaction %s must belong to the same document as the rounded %s",
+                            mainTransaction.getDocument(), roundedTransaction.getDocument()) );
                 }
                 mainTransaction.setAmountVat(mainTransaction.getAmountVat().add(roundedTransaction.getAmountVat()));
                 mainTransaction.setAmountWithoutVat(mainTransaction.getAmountWithoutVat().subtract(roundedTransaction.getAmountVat()));
