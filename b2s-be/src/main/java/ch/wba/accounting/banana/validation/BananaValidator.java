@@ -1,16 +1,16 @@
 package ch.wba.accounting.banana.validation;
 
+import ch.wba.accounting.banana.BananaTransactionDto;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import ch.wba.accounting.banana.BananaTransactionDto;
 
 public class BananaValidator {
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -24,7 +24,7 @@ public class BananaValidator {
     }
 
     protected Set<ConstraintViolation<BananaTransactionDto>> validate(final BananaTransactionDto input) {
-        final Set<ConstraintViolation<BananaTransactionDto>> violations = validator.validate(input);
+        final Set<ConstraintViolation<BananaTransactionDto>> violations = new HashSet<>(validator.validate(input));
         if (input.isComposedTransaction()) {
             final Set<ConstraintViolation<BananaTransactionDto>> integratedViolations = input.getIntegratedTransactions().stream() //
                 .map(t -> validator.validate(t)) //

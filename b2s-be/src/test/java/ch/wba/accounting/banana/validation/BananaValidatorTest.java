@@ -285,6 +285,36 @@ public class BananaValidatorTest {
         //assert
         assertThat(result, not(Matchers.hasItem(hasViolation(IntegratedTransactionDateValidator.FIELD_DATE, testee.getUuid()))));
     }
+
+    @Test
+    public void validate_invalidAmountWithVatValue_AmountViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setAmount(new BigDecimal("7703"));
+        testee.setAmountWithoutVat(new BigDecimal("7153"));
+        testee.setAmountVat(new BigDecimal("-550.78"));
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, Matchers.hasItem(hasViolation(AmountValidator.FIELD_AMOUNT,
+                "Amount 7703 doesnt match to the net 7153 and tax value -550.78",
+                testee.getUuid())));
+    }
+
+
+    @Test
+    public void validate_correctAmountWithVatValue_NoAmountViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setAmount(new BigDecimal("7703.78"));
+        testee.setAmountWithoutVat(new BigDecimal("7153"));
+        testee.setAmountVat(new BigDecimal("-550.78"));
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, not(Matchers.hasItem(hasViolation(AmountValidator.FIELD_AMOUNT, testee.getUuid()))));
+    }
+
     private Matcher<Object> hasViolation(final String field) {
         return Matchers.hasProperty("field", is(field));
     }
