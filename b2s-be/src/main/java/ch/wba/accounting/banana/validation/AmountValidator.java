@@ -3,6 +3,7 @@ package ch.wba.accounting.banana.validation;
 import ch.wba.accounting.banana.BananaTransactionDto;
 
 import javax.validation.ConstraintValidatorContext;
+import java.math.BigDecimal;
 
 public class AmountValidator extends AbstractBananaValidator<AmoundConstraint> {
     static final String FIELD_AMOUNT = "amount";
@@ -23,8 +24,10 @@ public class AmountValidator extends AbstractBananaValidator<AmoundConstraint> {
     @Override
     protected boolean isValidInternal(BananaTransactionDto value, ConstraintValidatorContext context) {
         if (value.getAmountVat() != null || value.getAmountWithoutVat() != null) {
+            BigDecimal vat = value.getAmountVat() != null ? value.getAmountVat() : BigDecimal.ZERO;
+            BigDecimal withoutVat = value.getAmountWithoutVat() != null ? value.getAmountWithoutVat() : BigDecimal.ZERO;
             return  value.getAmount() != null &&
-                    value.getAmount().subtract(value.getAmountVat().abs()).compareTo(value.getAmountWithoutVat()) == 0;
+                    value.getAmount().subtract(vat.abs()).compareTo(withoutVat) == 0;
         }
         return true;
     }
