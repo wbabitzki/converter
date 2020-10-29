@@ -43,8 +43,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class BananaResourceIT {
     private static final String SERVICE_URI = "http://localhost:8080/b2s-rest/rest/banana/";
@@ -53,7 +54,7 @@ public class BananaResourceIT {
     private static final String PATH_VALIDATE = "validate";
     private static final String TEST_BANANA_JSON = "test-banana.json";
     private static final String TEST_INVALID_BANANA_JSON = "test-invalid-banana.json";
-    private static final String TEST_BANANA_CSV = "test-banana.csv";
+    private static final String TEST_BANANA_TAB_CSV = "test-banana-tab.csv";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
     private static final UUID TEST_UUID = UUID.fromString("34844b03-d68d-45f6-93b4-b07701f7a016");
 
@@ -97,7 +98,7 @@ public class BananaResourceIT {
     @Test
     public void readFile_csvFile_readsAllRecords() throws Exception {
         // arrange
-        final File file = new File(getClass().getClassLoader().getResource(TEST_BANANA_CSV).getFile());
+        final File file = new File(getClass().getClassLoader().getResource(TEST_BANANA_TAB_CSV).getFile());
         final FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file", file);
         Response response = null;
         // act
@@ -113,7 +114,7 @@ public class BananaResourceIT {
         final List<BananaTransactionDto> result = objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<BananaTransactionDto>>() {
             // Empty
         });
-        assertThat(result, hasSize(11));
+        assertThat(result, hasSize(23));
     }
 
     @Test

@@ -16,7 +16,6 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -103,28 +102,31 @@ public class BananaTransactionReader {
         return fieldRules;
     }
 
-    public List<BananaTransactionDto> readTransactions(final BufferedReader buffer) {
+    public List<BananaTransactionDto> readTransactions(final BufferedReader buffer, final char delimiter) {
         Validate.isTrue(buffer != null);
         final List<String> lines = buffer.lines().collect(Collectors.toList());
         Validate.notEmpty(lines, "The imported list ist empty");
         //
-        final List<BananaTransactionDto> initialTransactions = mapFromString(lines);
+        final List<BananaTransactionDto> initialTransactions = mapFromString(lines, delimiter);
         final List<BananaTransactionDto> adjustedTransactions = bananaTransactionPostProcessor.adjustTransactions(initialTransactions);
         return new ArrayList<>(adjustedTransactions.stream() //
-            .collect(COMPOSED_TRANSACTION_COLLECTOR) //
-            .values());
+                .collect(COMPOSED_TRANSACTION_COLLECTOR) //
+                .values());
     }
 
-    protected List<BananaTransactionDto> mapFromString(final List<String> lines) {
+    public List<BananaTransactionDto> readTransactions(final BufferedReader buffer) {
+       return readTransactions(buffer, '\t');
+    }
+
+    protected List<BananaTransactionDto> mapFromString(final List<String> lines, char delimiter) {
         return lines.stream() //
-            .map(this::toBananaDto) //
-            .filter(Objects::nonNull) //
-            .collect(Collectors.toList());
+                .map(line -> toBananaDto(line, delimiter)) //
+                .collect(Collectors.toList());
     }
 
-    protected BananaTransactionDto toBananaDto(String line) {
+    protected BananaTransactionDto toBananaDto(String line, char delimiter) {
         String[] fields = null;
-        try (CSVReader csvReader = getCsvReader(line)) {
+        try (CSVReader csvReader = createCsvReader(line, delimiter)) {
             fields = csvReader.readNext();
         } catch (final IOException e) {
             throw new BananaReaderExceptions.InvalidLineException(String.format("Invalid line: \"%s\"", line));
@@ -134,7 +136,7 @@ public class BananaTransactionReader {
     }
 
     private void validateFields(String line, String[] fields) {
-        if (fields == null || fields.length != EXPORT_FIELD_NUMBER) {
+        if (fields == null || fields.length < EXPORT_FIELD_NUMBER) {
             final String message = String.format("Invalid fields number. Expected %d but was %d", EXPORT_FIELD_NUMBER,
                     fields == null ? 0 : fields.length);
             throw new BananaReaderExceptions.InvalidFieldNumberException(message);
@@ -145,7 +147,7 @@ public class BananaTransactionReader {
         }
     }
 
-    protected CSVReader getCsvReader(String line) {
-        return new CSVReader(new StringReader(line));
+    protected CSVReader createCsvReader(String line, char delimiter) {
+        return new CSVReader(new StringReader(line), delimiter);
     }
 }

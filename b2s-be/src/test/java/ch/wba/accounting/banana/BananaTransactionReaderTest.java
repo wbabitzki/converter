@@ -18,16 +18,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BananaTransactionReaderTest {
     private static final String TEST_VALID_FILE = "test-banana.csv";
+    private static final String TEST_VALID_TAB_FILE = "test-banana-tab.csv";
+
     private BananaTransactionReader testee;
 
     @Rule
@@ -43,7 +45,7 @@ public class BananaTransactionReaderTest {
         //arrange
         final String input = "05.01.2018,1,Zahlungseingang Rechnung 103,1020,3000,15'000.00,B80,,-8,-8,13'888.89,-1'111.11,2201,,,-1'111.11,";
         //act
-        final BananaTransactionDto transaction = testee.toBananaDto(input);
+        final BananaTransactionDto transaction = testee.toBananaDto(input, ',');
         //assert
         assertNotNull(transaction);
         assertThat(transaction.getDate(), is(LocalDateConverter.toDate("05.01.2018")));
@@ -70,7 +72,7 @@ public class BananaTransactionReaderTest {
         //arrange
         final String input = "05.01.2018,2,Bareinzahlung Kasse,1000,1020,2'000.00,,,,,,,,,,,";
         //act
-        final BananaTransactionDto transaction = testee.toBananaDto(input);
+        final BananaTransactionDto transaction = testee.toBananaDto(input, ',');
         //assert
         assertNotNull(transaction);
         assertThat(transaction.getDate(), is(LocalDateConverter.toDate("05.01.2018")));
@@ -91,9 +93,20 @@ public class BananaTransactionReaderTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_VALID_FILE);
         final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         //act
-        final List<BananaTransactionDto> transactions = testee.readTransactions(reader);
+        final List<BananaTransactionDto> transactions = testee.readTransactions(reader, ',');
         //assert
         assertThat(transactions.size(), is(11));
+    }
+
+    @Test
+    public void readTransactions_validTabSeparatedFile_expectedLineCount() {
+        //arrange
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(TEST_VALID_TAB_FILE);
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        //act
+        final List<BananaTransactionDto> transactions = testee.readTransactions(reader, '\t');
+        //assert
+        assertThat(transactions.size(), is(23));
     }
 
     @Test
@@ -124,14 +137,14 @@ public class BananaTransactionReaderTest {
         when(csvReader.readNext()).thenThrow(IOException.class);
         BananaTransactionReader reader = new BananaTransactionReader() {
             @Override
-            protected CSVReader getCsvReader(String line) {
+            protected CSVReader createCsvReader(String line, char delimiter) {
                 return csvReader;
             }
         };
         exceptionRule.expect(BananaReaderExceptions.InvalidLineException.class);
         exceptionRule.expectMessage("Invalid line: \"Test\"");
         //act
-        reader.toBananaDto("Test");
+        reader.toBananaDto("Test", ',');
     }
 
     @Test
@@ -141,7 +154,7 @@ public class BananaTransactionReaderTest {
         exceptionRule.expect(BananaReaderExceptions.InvalidDateException.class);
         exceptionRule.expectMessage(String.format("Invalid date: \"%s\" in line \"%s\"", "05012018", input));
         //act
-        testee.toBananaDto(input);
+        testee.toBananaDto(input, ',');
     }
 
     @Test
@@ -151,7 +164,7 @@ public class BananaTransactionReaderTest {
         exceptionRule.expect(BananaReaderExceptions.InvalidFieldNumberException.class);
         exceptionRule.expectMessage(String.format("Invalid fields number. Expected %d but was %d", 17, 16));
         //act
-        testee.toBananaDto(input);
+        testee.toBananaDto(input, ',');
     }
     private BananaTransactionDto createBananaDto(final String document, final String description) {
         final BananaTransactionDto firstSimple = new BananaTransactionDto();
