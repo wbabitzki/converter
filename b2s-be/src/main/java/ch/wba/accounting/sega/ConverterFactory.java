@@ -11,8 +11,8 @@ public class ConverterFactory {
 
     private final Map<Predicate<BananaTransactionDto>, SegaConverter> converters = new HashMap<>();
 
-    public SegaConverter register(final Predicate<BananaTransactionDto> condition, final SegaConverter converter) {
-        return converters.put(condition, converter);
+    public void register(final Predicate<BananaTransactionDto> condition, final SegaConverter converter) {
+        converters.put(condition, converter);
     }
 
     public SegaConverter create(final BananaTransactionDto transaction) {

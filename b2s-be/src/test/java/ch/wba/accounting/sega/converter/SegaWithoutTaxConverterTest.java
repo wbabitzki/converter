@@ -1,19 +1,18 @@
 package ch.wba.accounting.sega.converter;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
 import ch.wba.accounting.sega.SegaDto;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 public class SegaWithoutTaxConverterTest {
     private SegaConverter testee;
@@ -36,7 +35,7 @@ public class SegaWithoutTaxConverterTest {
         //act
         final List<SegaDto> result = testee.toSegaTransactions(input);
         //assert
-        Assert.assertThat(result, hasSize(2));
+        assertThat(result, hasSize(2));
         assertThat(result.get(0).getDatum(), is(LocalDateConverter.toDate("30.08.2017")));
         assertThat(result.get(0).getBlg(), is("1"));
         assertThat(result.get(0).getTransactionType(), is(SegaDto.SOLL_HABEN.SOLL));

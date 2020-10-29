@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -42,9 +42,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.*;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertTrue;
 
 public class BananaResourceIT {
@@ -170,6 +170,6 @@ public class BananaResourceIT {
 
     private String readTestFile(final String fileName) throws Exception {
         final URI uri = getClass().getClassLoader().getResource(fileName).toURI();
-        return new String(Files.readAllBytes(Paths.get(uri)), Charset.forName("UTF-8"));
+        return new String(Files.readAllBytes(Paths.get(uri)), StandardCharsets.UTF_8);
     }
 }

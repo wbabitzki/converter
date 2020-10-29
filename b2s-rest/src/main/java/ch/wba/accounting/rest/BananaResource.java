@@ -1,12 +1,12 @@
 package ch.wba.accounting.rest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import ch.wba.accounting.banana.BananaTransactionDto;
+import ch.wba.accounting.banana.BananaTransactionReader;
+import ch.wba.accounting.banana.validation.BananaValidator;
+import ch.wba.accounting.banana.validation.BananaViolation;
+import ch.wba.accounting.sega.ConverterService;
+import ch.wba.accounting.sega.SegaDto;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,15 +15,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import ch.wba.accounting.banana.BananaTransactionDto;
-import ch.wba.accounting.banana.BananaTransactionReader;
-import ch.wba.accounting.banana.validation.BananaValidator;
-import ch.wba.accounting.banana.validation.BananaViolation;
-import ch.wba.accounting.sega.ConverterService;
-import ch.wba.accounting.sega.SegaDto;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Stateless
 @Path("banana")
@@ -55,7 +54,7 @@ public class BananaResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public List<BananaTransactionDto> readFile(@FormDataParam("file") final InputStream inputStream) {
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return bananaReader.readTransactions(reader);
         } catch (final IOException e) {
             throw new RuntimeException(e);

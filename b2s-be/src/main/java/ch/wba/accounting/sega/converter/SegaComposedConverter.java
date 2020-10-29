@@ -7,8 +7,8 @@ import java.util.List;
 
 public class SegaComposedConverter extends AbstractSegaConverter {
 
-    private SegaConverter converterWithoutVat = new SegaWithoutVatShortConverter();
-    private SegaConverter converterWithVat = new SegaWithVatShortConverter();
+    final private SegaConverter converterWithoutVat = new SegaWithoutVatShortConverter();
+    final private SegaConverter converterWithVat = new SegaWithVatShortConverter();
 
     @Override
     public List<SegaDto> toSegaTransactions(BananaTransactionDto transaction) {

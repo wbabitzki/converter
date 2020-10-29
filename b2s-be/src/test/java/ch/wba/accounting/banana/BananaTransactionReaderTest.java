@@ -5,9 +5,7 @@ import ch.wba.accounting.converters.BigDecimalConverter;
 import ch.wba.accounting.converters.LocalDateConverter;
 import com.opencsv.CSVReader;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,9 +30,6 @@ public class BananaTransactionReaderTest {
     private static final String TEST_VALID_TAB_FILE = "test-banana-tab.csv";
 
     private BananaTransactionReader testee;
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -141,31 +137,35 @@ public class BananaTransactionReaderTest {
                 return csvReader;
             }
         };
-        exceptionRule.expect(BananaReaderExceptions.InvalidLineException.class);
-        exceptionRule.expectMessage("Invalid line: \"Test\"");
         //act
-        reader.toBananaDto("Test", ',');
+        Exception exception = assertThrows(BananaReaderExceptions.InvalidLineException.class,
+                () -> reader.toBananaDto("Test", ','));
+        //asset
+        assertThat(exception.getMessage(), is("Invalid line: \"Test\""));
     }
 
     @Test
     public void toBananaDto_invalidDate_InvalidDateException() {
-        //arrange & assert
+        //arrange
         final String input = "05012018,1,Zahlungseingang Rechnung 103,1020,3000,15'000.00,B80,,-8,-8,13'888.89,-1'111.11,2201,,,-1'111.11,";
-        exceptionRule.expect(BananaReaderExceptions.InvalidDateException.class);
-        exceptionRule.expectMessage(String.format("Invalid date: \"%s\" in line \"%s\"", "05012018", input));
         //act
-        testee.toBananaDto(input, ',');
+        Exception exception = assertThrows(BananaReaderExceptions.InvalidDateException.class,
+                () -> testee.toBananaDto(input, ','));
+        //asset
+        assertThat(exception.getMessage(), is(String.format("Invalid date: \"%s\" in line \"%s\"", "05012018", input)));
     }
 
     @Test
     public void toBananaDto_invalidFieldNumber_InvalidFieldNumberException() {
         //arrange & assert
         final String input = "1,Zahlungseingang Rechnung 103,1020,3000,15'000.00,B80,,-8,-8,13'888.89,-1'111.11,2201,,,-1'111.11,";
-        exceptionRule.expect(BananaReaderExceptions.InvalidFieldNumberException.class);
-        exceptionRule.expectMessage(String.format("Invalid fields number. Expected %d but was %d", 17, 16));
         //act
-        testee.toBananaDto(input, ',');
+        Exception exception = assertThrows(BananaReaderExceptions.InvalidFieldNumberException.class,
+                () ->testee.toBananaDto(input, ','));
+        //asset
+        assertThat(exception.getMessage(), is(String.format("Invalid fields number. Expected %d but was %d", 17, 16)));
     }
+
     private BananaTransactionDto createBananaDto(final String document, final String description) {
         final BananaTransactionDto firstSimple = new BananaTransactionDto();
         firstSimple.setDocument(document);

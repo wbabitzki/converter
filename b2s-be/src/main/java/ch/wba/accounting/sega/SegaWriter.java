@@ -6,7 +6,7 @@ import org.apache.commons.lang3.Validate;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +24,7 @@ public class SegaWriter {
     }
 
     private List<String> toStringList(final List<SegaDto> list) {
-        final List<String> result = new ArrayList<>(Arrays.asList(String.join(SegaDto.DELIMITER, SegaDto.HEADERS) + WINDOWS_LINE_END));
+        final List<String> result = new ArrayList<>(Collections.singletonList(String.join(SegaDto.DELIMITER, SegaDto.HEADERS) + WINDOWS_LINE_END));
         result.addAll( //
             list.stream().map(sega -> sega.toString() + WINDOWS_LINE_END) //
                 .collect(Collectors.toList()));

@@ -1,11 +1,11 @@
 package ch.wba.accounting.converters;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.time.LocalDate;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LocalDateConverterTest {
     @Test

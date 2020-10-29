@@ -4,27 +4,23 @@ import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.banana.BananaTransactionReader;
 import ch.wba.accounting.sega.ConverterService;
 import ch.wba.accounting.sega.SegaWriter;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BananaResourceTest {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
     @InjectMocks
     private BananaResource testee;
     @Mock

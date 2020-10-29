@@ -1,15 +1,15 @@
 package ch.wba.accounting.banana;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.List;
-
+import ch.wba.accounting.converters.BigDecimalConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.wba.accounting.converters.BigDecimalConverter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class BananaTransactionPostProcesserTest {
     private BananaTransactionPostProcesser testee;
@@ -76,7 +76,7 @@ public class BananaTransactionPostProcesserTest {
         final BananaTransactionDto transaction = createBananaDto("1", "Transaction");
         transaction.setVatCode("UST77");
         //act
-        final List<BananaTransactionDto> result = testee.adjustTransactions(Arrays.asList(transaction));
+        final List<BananaTransactionDto> result = testee.adjustTransactions(Collections.singletonList(transaction));
         //assert
         assertThat(result.get(0).getVatCode(), is(BananacConstants.VAT_UST_77_CODE));
     }

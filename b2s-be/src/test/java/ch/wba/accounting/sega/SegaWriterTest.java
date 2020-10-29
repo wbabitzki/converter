@@ -1,8 +1,7 @@
 package ch.wba.accounting.sega;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -12,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.Mockito.endsWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class SegaWriterTest {
     private static final String TEST_HEADER = "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag\r\n";

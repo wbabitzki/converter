@@ -12,7 +12,7 @@ import static ch.wba.accounting.banana.BananaTransactionPredicates.isRounded;
 import static ch.wba.accounting.banana.BananaTransactionPredicates.isUst;
 
 public class BananaTransactionPostProcesser {
-    abstract class TransactionAdjuster implements Consumer<Integer> {
+    abstract static class TransactionAdjuster implements Consumer<Integer> {
         List<BananaTransactionDto> transactions = null;
 
         TransactionAdjuster(final List<BananaTransactionDto> transactions) {

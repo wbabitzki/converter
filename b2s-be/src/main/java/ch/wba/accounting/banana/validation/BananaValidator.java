@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BananaValidator {
-    private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    final private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     public Map<UUID, List<BananaViolation>> validate(final List<BananaTransactionDto> input) {
         return input.stream() //
@@ -27,7 +28,7 @@ public class BananaValidator {
         final Set<ConstraintViolation<BananaTransactionDto>> violations = new HashSet<>(validator.validate(input));
         if (input.isComposedTransaction()) {
             final Set<ConstraintViolation<BananaTransactionDto>> integratedViolations = input.getIntegratedTransactions().stream() //
-                .map(t -> validator.validate(t)) //
+                .map((Function<BananaTransactionDto, Set<ConstraintViolation<BananaTransactionDto>>>) validator::validate) //
                 .flatMap(Set<ConstraintViolation<BananaTransactionDto>>::stream) //
                 .collect(Collectors.toSet());
             violations.addAll(integratedViolations);

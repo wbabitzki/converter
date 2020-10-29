@@ -125,7 +125,7 @@ public class BananaTransactionReader {
     }
 
     protected BananaTransactionDto toBananaDto(String line, char delimiter) {
-        String[] fields = null;
+        String[] fields;
         try (CSVReader csvReader = createCsvReader(line, delimiter)) {
             fields = csvReader.readNext();
         } catch (final IOException e) {
