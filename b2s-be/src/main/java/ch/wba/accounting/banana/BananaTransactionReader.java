@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class BananaTransactionReader {
     private static final int EXPORT_FIELD_NUMBER = 17;
-    private final BananaTransactionPostProcesser bananaTransactionPostProcessor = new BananaTransactionPostProcesser();
+    private final BananaTransactionPostProcessor bananaTransactionPostProcessor = new BananaTransactionPostProcessor();
 
     private enum Fields {
             DATE(0), //

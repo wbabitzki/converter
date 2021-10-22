@@ -1,33 +1,54 @@
 package ch.wba.accounting.banana;
 
 import ch.wba.accounting.converters.BigDecimalConverter;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-public class BananaTransactionPostProcesserTest {
-    private BananaTransactionPostProcesser testee;
+public class RoundedRuleTest {
+    private RoundedRule testee;
 
     @Before
     public void setUp() {
-        testee = new BananaTransactionPostProcesser();
+        testee = new RoundedRule();
+    }
+
+    @Test
+    public void applicable_withoutRoundedTransaction_false() {
+        // arrange
+        final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
+        // act
+        final boolean result = testee.applicable(roundedTransaction);
+        // assert
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void applicable_withRoundedTransaction_true() {
+        // arrange
+        final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
+        roundedTransaction.setVatCode(BananacConstants.VAT_UP_ROUNDED_CODE);
+        // act
+        final boolean result = testee.applicable(roundedTransaction);
+        // assert
+        assertThat(result, is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void adjustTransactions_roundedVatWithoutMainTransaction_throwsException() {
-        //arrange
+        // arrange
         final BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
         final BananaTransactionDto roundedTransaction = createBananaDto("2", "Rounded transaction");
         roundedTransaction.setVatCode(BananacConstants.VAT_UP_ROUNDED_CODE);
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
-        //act
-        testee.adjustTransactions(transactions);
+        // act
+        testee.apply(1, transactions);
     }
 
     @Test
@@ -42,12 +63,12 @@ public class BananaTransactionPostProcesserTest {
         roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("0.01"));
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         //act
-        final List<BananaTransactionDto> result = testee.adjustTransactions(transactions);
+        final List<BananaTransactionDto> result = testee.apply(1, transactions);
         //assert
-        assertThat(result.size(), is(1));
-        assertThat(result.get(0).getAmount(), is(BigDecimalConverter.toAmount("83.85")));
-        assertThat(result.get(0).getAmountWithoutVat(), is(BigDecimalConverter.toAmount("77.85")));
-        assertThat(result.get(0).getAmountVat(), is(BigDecimalConverter.toAmount("6.00")));
+        assertThat(result.size(), CoreMatchers.is(2));
+        assertThat(result.get(0).getAmount(), CoreMatchers.is(BigDecimalConverter.toAmount("83.85")));
+        assertThat(result.get(0).getAmountWithoutVat(), CoreMatchers.is(BigDecimalConverter.toAmount("77.85")));
+        assertThat(result.get(0).getAmountVat(), CoreMatchers.is(BigDecimalConverter.toAmount("6.00")));
     }
 
     @Test
@@ -62,23 +83,12 @@ public class BananaTransactionPostProcesserTest {
         roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("-0.01"));
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         //act
-        final List<BananaTransactionDto> result = testee.adjustTransactions(transactions);
+        final List<BananaTransactionDto> result = testee.apply(1, transactions);;
         //assert
-        assertThat(result.size(), is(1));
-        assertThat(result.get(0).getAmount(), is(BigDecimalConverter.toAmount("220.75")));
-        assertThat(result.get(0).getAmountWithoutVat(), is(BigDecimalConverter.toAmount("204.98")));
-        assertThat(result.get(0).getAmountVat(), is(BigDecimalConverter.toAmount("15.77")));
-    }
-
-    @Test
-    public void adjust_USTVatCode_changesUstVatCode() {
-        //arrange
-        final BananaTransactionDto transaction = createBananaDto("1", "Transaction");
-        transaction.setVatCode("UST77");
-        //act
-        final List<BananaTransactionDto> result = testee.adjustTransactions(Collections.singletonList(transaction));
-        //assert
-        assertThat(result.get(0).getVatCode(), is(BananacConstants.VAT_UST_77_CODE));
+        assertThat(result.size(), CoreMatchers.is(2));
+        assertThat(result.get(0).getAmount(), CoreMatchers.is(BigDecimalConverter.toAmount("220.75")));
+        assertThat(result.get(0).getAmountWithoutVat(), CoreMatchers.is(BigDecimalConverter.toAmount("204.98")));
+        assertThat(result.get(0).getAmountVat(), CoreMatchers.is(BigDecimalConverter.toAmount("15.77")));
     }
 
     private BananaTransactionDto createBananaDto(final String document, final String description) {
@@ -87,4 +97,5 @@ public class BananaTransactionPostProcesserTest {
         dto.setDescription(description);
         return dto;
     }
+
 }
