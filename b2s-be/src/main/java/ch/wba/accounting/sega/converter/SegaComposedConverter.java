@@ -2,6 +2,7 @@ package ch.wba.accounting.sega.converter;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.sega.SegaDto;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class SegaComposedConverter extends AbstractSegaConverter {
 
     final private SegaConverter converterWithoutVat = new SegaWithoutVatShortConverter();
     final private SegaConverter converterWithVat = new SegaWithVatShortConverter();
+    final private SegaConverter converterReversalWithVat = new SegaReversalConverter();
 
     @Override
     public List<SegaDto> toSegaTransactions(BananaTransactionDto transaction) {
@@ -18,12 +20,21 @@ public class SegaComposedConverter extends AbstractSegaConverter {
             if (bananaTransactionDto.getAmountVat() == null) {
                 result.addAll(converterWithoutVat.toSegaTransactions(bananaTransactionDto));
             } else {
-                result.addAll(converterWithVat.toSegaTransactions(bananaTransactionDto));
-                result.get(result.size()-2).setsIdx(result.size());
+                if (bananaTransactionDto.isReversal()) {
+                    result.addAll(converterReversalWithVat.toSegaTransactions(bananaTransactionDto));
+                } else {
+                    result.addAll(converterWithVat.toSegaTransactions(bananaTransactionDto));
+                }
+                result.get(result.size() - 2).setsIdx(result.size());
             }
         }
         for (int i=1; i<result.size(); i++) {
-            result.get(i).setgKto(transaction.getCreditAccount());
+            final SegaDto dto = result.get(i);
+            if (dto.getKto() == null || dto.getKto().length() == 0) {
+                dto.setKto(transaction.getCreditAccount());
+            } else {
+                dto.setgKto(transaction.getCreditAccount());
+            }
         }
         return result;
     }

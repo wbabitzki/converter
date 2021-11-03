@@ -52,6 +52,7 @@ public class BananaTransactionDto {
     private String vatAccount = "";
     private final List<BananaTransactionDto> integratedTransactions = new ArrayList<>();
     private BananaTransactionDto mainTransaction;
+    private boolean reversal = false;
 
     public BananaTransactionDto() {
         uuid = UUID.randomUUID();
@@ -173,6 +174,14 @@ public class BananaTransactionDto {
 
     public BananaTransactionDto getMainTransaction() {
         return mainTransaction;
+    }
+
+    public boolean isReversal() {
+        return reversal;
+    }
+
+    public void setReversal(boolean reversal) {
+        this.reversal = reversal;
     }
 
     @Override

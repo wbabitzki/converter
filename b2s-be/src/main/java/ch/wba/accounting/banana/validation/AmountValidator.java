@@ -27,7 +27,7 @@ public class AmountValidator extends AbstractBananaValidator<AmoundConstraint> {
             BigDecimal vat = value.getAmountVat() != null ? value.getAmountVat() : BigDecimal.ZERO;
             BigDecimal withoutVat = value.getAmountWithoutVat() != null ? value.getAmountWithoutVat() : BigDecimal.ZERO;
             return  value.getAmount() != null &&
-                    value.getAmount().subtract(vat.abs()).compareTo(withoutVat) == 0;
+                    value.getAmount().abs().subtract(vat.abs()).compareTo(withoutVat.abs()) == 0;
         }
         return true;
     }

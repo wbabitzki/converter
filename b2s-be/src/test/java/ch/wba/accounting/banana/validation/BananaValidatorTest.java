@@ -315,6 +315,19 @@ public class BananaValidatorTest {
         assertThat(result, not(Matchers.hasItem(hasViolation(AmountValidator.FIELD_AMOUNT, testee.getUuid()))));
     }
 
+    @Test
+    public void validate_correctAmountWithNegativeVatValue_NoAmountViolation() {
+        //arrange
+        final BananaTransactionDto testee = new BananaTransactionDto();
+        testee.setAmount(new BigDecimal("-119"));
+        testee.setAmountWithoutVat(new BigDecimal("-110.49"));
+        testee.setAmountVat(new BigDecimal("-8.51"));
+        //act
+        final Set<ConstraintViolation<BananaTransactionDto>> result = new BananaValidator().validate(testee);
+        //assert
+        assertThat(result, not(Matchers.hasItem(hasViolation(AmountValidator.FIELD_AMOUNT, testee.getUuid()))));
+    }
+
     private Matcher<Object> hasViolation(final String field) {
         return Matchers.hasProperty("field", is(field));
     }

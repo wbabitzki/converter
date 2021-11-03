@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import static ch.wba.accounting.banana.BananaTransactionPredicates.isRounded;
 
 public class BananaTransactionPostProcessor {
-    final private static List<PostProcessorRule> rules = Arrays.asList(new UstRule(), new RoundedRule());
+    final private static List<PostProcessorRule> rules = Arrays.asList(new UstRule(), new RoundedRule(), new ReversalRule());
 
     public List<BananaTransactionDto> adjustTransactions(final List<BananaTransactionDto> transactions) {
         return applyRules(transactions).stream()
