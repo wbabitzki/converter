@@ -2,6 +2,7 @@ package ch.wba.accounting.sega.converter;
 
 import ch.wba.accounting.banana.BananaTransactionDto;
 import ch.wba.accounting.sega.SegaDto;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +29,16 @@ public class SegaComposedConverter extends AbstractSegaConverter {
                 result.get(result.size() - 2).setsIdx(result.size());
             }
         }
-        for (int i=1; i<result.size(); i++) {
+        return fillCreditAccount(transaction.getCreditAccount(), result);
+    }
+
+    private List<SegaDto> fillCreditAccount(String account, List<SegaDto> result) {
+        for (int i = 1; i< result.size(); i++) {
             final SegaDto dto = result.get(i);
-            if (dto.getKto() == null || dto.getKto().length() == 0) {
-                dto.setKto(transaction.getCreditAccount());
+            if (StringUtils.isEmpty(dto.getKto())) {
+                dto.setKto(account);
             } else {
-                dto.setgKto(transaction.getCreditAccount());
+                dto.setgKto(account);
             }
         }
         return result;
