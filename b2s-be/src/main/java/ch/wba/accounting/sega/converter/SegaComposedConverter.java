@@ -5,6 +5,7 @@ import ch.wba.accounting.sega.SegaDto;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SegaComposedConverter extends AbstractSegaConverter {
@@ -15,8 +16,13 @@ public class SegaComposedConverter extends AbstractSegaConverter {
 
     @Override
     public List<SegaDto> toSegaTransactions(BananaTransactionDto transaction) {
+        final List<SegaDto> result = new ArrayList<>(Collections.singletonList(createFirstCompoundRecord(transaction)));
+        result.addAll(fromIntegratedTransactions(transaction));
+        return fillCreditAccount(transaction.getCreditAccount(), result);
+    }
+
+    private List<SegaDto> fromIntegratedTransactions(BananaTransactionDto transaction) {
         final List<SegaDto> result = new ArrayList<>();
-        result.add(createFirstCompoundRecord(transaction));
         for (BananaTransactionDto bananaTransactionDto : transaction.getIntegratedTransactions()) {
             if (bananaTransactionDto.getAmountVat() == null) {
                 result.addAll(converterWithoutVat.toSegaTransactions(bananaTransactionDto));
@@ -29,7 +35,7 @@ public class SegaComposedConverter extends AbstractSegaConverter {
                 result.get(result.size() - 2).setsIdx(result.size());
             }
         }
-        return fillCreditAccount(transaction.getCreditAccount(), result);
+        return result;
     }
 
     private List<SegaDto> fillCreditAccount(String account, List<SegaDto> result) {
