@@ -24,7 +24,7 @@ public class UstRuleTest {
     }
 
     @Test
-    public void applicable_Ust_true() {
+    public void applicable_UST77_true() {
         // arrange
         final BananaTransactionDto transaction = new BananaTransactionDto();
         transaction.setVatCode("UST77");
@@ -35,7 +35,18 @@ public class UstRuleTest {
     }
 
     @Test
-    public void adjust_USTVatCode_changesUstVatCode() {
+    public void applicable_UST81_true() {
+        // arrange
+        final BananaTransactionDto transaction = new BananaTransactionDto();
+        transaction.setVatCode("UST81");
+        // act
+        final boolean result = testee.applicable(transaction);
+        // assert
+        assertThat(result, is(true));
+    }
+
+    @Test
+    public void adjust_UST77_changesUstVatCode() {
         //arrange
         final BananaTransactionDto transaction = new BananaTransactionDto();
         transaction.setVatCode("UST77");
@@ -43,5 +54,16 @@ public class UstRuleTest {
         final List<BananaTransactionDto> result = testee.apply(0, Collections.singletonList(transaction));
         //assert
         assertThat(result.get(0).getVatCode(), CoreMatchers.is(BananacConstants.VAT_UST_77_CODE));
+    }
+
+    @Test
+    public void adjust_UST81_changesUstVatCode() {
+        //arrange
+        final BananaTransactionDto transaction = new BananaTransactionDto();
+        transaction.setVatCode("UST81");
+        //act
+        final List<BananaTransactionDto> result = testee.apply(0, Collections.singletonList(transaction));
+        //assert
+        assertThat(result.get(0).getVatCode(), CoreMatchers.is(BananacConstants.VAT_UST_81_CODE));
     }
 }

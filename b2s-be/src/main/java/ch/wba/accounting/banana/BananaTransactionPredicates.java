@@ -2,10 +2,11 @@ package ch.wba.accounting.banana;
 
 import java.util.function.Predicate;
 
+import static ch.wba.accounting.banana.BananacConstants.VAT_UST_PREFIX;
+
 public class BananaTransactionPredicates {
     protected static final String VAT_UP_ROUNDED_CODE = "M77-2";
     protected static final String VAT_OFF_ROUNDED_CODE = "-M77-2";
-    protected static final String VAT_UST_77_CODE = "USt77";
     protected static final String VAT_REVERSAL = "-VSM77";
 
     private BananaTransactionPredicates() {
@@ -19,7 +20,7 @@ public class BananaTransactionPredicates {
 
     static final Predicate<BananaTransactionDto> isUst = transactions -> {
         final String vatCode = transactions.getVatCode();
-        return VAT_UST_77_CODE.equalsIgnoreCase(vatCode);
+        return vatCode != null && vatCode.toLowerCase().startsWith(VAT_UST_PREFIX.toLowerCase());
     };
 
     static final Predicate<BananaTransactionDto> isReversal = transactions -> {

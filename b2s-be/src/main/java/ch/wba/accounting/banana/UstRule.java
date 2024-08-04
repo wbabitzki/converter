@@ -2,7 +2,7 @@ package ch.wba.accounting.banana;
 
 import java.util.List;
 
-import static ch.wba.accounting.banana.BananaTransactionPredicates.VAT_UST_77_CODE;
+import static ch.wba.accounting.banana.BananacConstants.VAT_UST_PREFIX;
 
 public class UstRule extends PostProcessorRule {
     @Override
@@ -12,7 +12,8 @@ public class UstRule extends PostProcessorRule {
 
     @Override
     public List<BananaTransactionDto> apply(final int i, final List<BananaTransactionDto> transactions) {
-        transactions.get(i).setVatCode(VAT_UST_77_CODE);
+        final String vatCode = transactions.get(i).getVatCode();
+        transactions.get(i).setVatCode(VAT_UST_PREFIX.concat(vatCode.substring(VAT_UST_PREFIX.length())));
         return transactions;
     }
 }
