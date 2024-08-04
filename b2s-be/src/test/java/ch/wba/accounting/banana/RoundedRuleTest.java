@@ -33,7 +33,7 @@ public class RoundedRuleTest {
     public void applicable_withRoundedTransaction_true() {
         // arrange
         final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
-        roundedTransaction.setVatCode(BananacConstants.VAT_UP_ROUNDED_CODE);
+        roundedTransaction.setVatCode(BananacConstants.VAT_77_UP_ROUNDED_CODE);
         // act
         final boolean result = testee.applicable(roundedTransaction);
         // assert
@@ -45,7 +45,7 @@ public class RoundedRuleTest {
         // arrange
         final BananaTransactionDto firstTransaction = createBananaDto("1", "First transaction");
         final BananaTransactionDto roundedTransaction = createBananaDto("2", "Rounded transaction");
-        roundedTransaction.setVatCode(BananacConstants.VAT_UP_ROUNDED_CODE);
+        roundedTransaction.setVatCode(BananacConstants.VAT_77_UP_ROUNDED_CODE);
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         // act
         testee.apply(1, transactions);
@@ -59,7 +59,7 @@ public class RoundedRuleTest {
         firstTransaction.setAmountVat(BigDecimalConverter.toAmount("5.99"));
         firstTransaction.setAmountWithoutVat(BigDecimalConverter.toAmount("77.86"));
         final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
-        roundedTransaction.setVatCode(BananacConstants.VAT_UP_ROUNDED_CODE);
+        roundedTransaction.setVatCode(BananacConstants.VAT_77_UP_ROUNDED_CODE);
         roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("0.01"));
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         //act
@@ -79,7 +79,7 @@ public class RoundedRuleTest {
         firstTransaction.setAmountVat(BigDecimalConverter.toAmount("15.78"));
         firstTransaction.setAmountWithoutVat(BigDecimalConverter.toAmount("204.97"));
         final BananaTransactionDto roundedTransaction = createBananaDto("1", "Rounded transaction");
-        roundedTransaction.setVatCode(BananacConstants.VAT_OFF_ROUNDED_CODE);
+        roundedTransaction.setVatCode(BananacConstants.VAT_77_OFF_ROUNDED_CODE);
         roundedTransaction.setAmountVat(BigDecimalConverter.toAmount("-0.01"));
         final List<BananaTransactionDto> transactions = Arrays.asList(firstTransaction, roundedTransaction);
         //act

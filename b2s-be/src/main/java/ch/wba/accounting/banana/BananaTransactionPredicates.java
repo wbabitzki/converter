@@ -1,13 +1,13 @@
 package ch.wba.accounting.banana;
 
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static ch.wba.accounting.banana.BananacConstants.VAT_UST_PREFIX;
 
 public class BananaTransactionPredicates {
-    protected static final String VAT_UP_ROUNDED_CODE = "M77-2";
-    protected static final String VAT_OFF_ROUNDED_CODE = "-M77-2";
-    protected static final String VAT_REVERSAL = "-VSM77";
+    private static final String VAT_REVERSAL = "-VSM77";
+    private static final Pattern ROUNDED_CODE_PATTERN = Pattern.compile("^-?M\\d{2}-\\d$");
 
     private BananaTransactionPredicates() {
         // Empty
@@ -15,7 +15,7 @@ public class BananaTransactionPredicates {
 
     static final Predicate<BananaTransactionDto> isRounded = transactions -> {
         final String vatCode = transactions.getVatCode();
-        return VAT_UP_ROUNDED_CODE.equals(vatCode) || VAT_OFF_ROUNDED_CODE.equals(vatCode);
+        return ROUNDED_CODE_PATTERN.matcher(vatCode).matches();
     };
 
     static final Predicate<BananaTransactionDto> isUst = transactions -> {
